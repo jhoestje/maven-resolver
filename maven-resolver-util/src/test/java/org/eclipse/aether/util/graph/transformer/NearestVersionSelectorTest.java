@@ -51,7 +51,7 @@ public class NearestVersionSelectorTest
     public void testSelectHighestVersionFromMultipleVersionsAtSameLevel()
         throws Exception
     {
-        DependencyNode root = parseResource( "sibling-versions.txt" );
+        DependencyNode<?> root = parseResource( "sibling-versions.txt" );
         assertSame( root, transform( root ) );
 
         assertEquals( 1, root.getChildren().size() );
@@ -99,7 +99,7 @@ public class NearestVersionSelectorTest
     public void testCyclicConflictIdGraph()
         throws Exception
     {
-        DependencyNode root = parseResource( "conflict-id-cycle.txt" );
+        DependencyNode<?> root = parseResource( "conflict-id-cycle.txt" );
 
         assertSame( root, transform( root ) );
 
@@ -141,7 +141,7 @@ public class NearestVersionSelectorTest
     public void testConflictGroupCompletelyDroppedFromResolvedTree()
         throws Exception
     {
-        DependencyNode root = parseResource( "dead-conflict-group.txt" );
+        DependencyNode<?> root = parseResource( "dead-conflict-group.txt" );
 
         assertSame( root, transform( root ) );
 
@@ -156,7 +156,7 @@ public class NearestVersionSelectorTest
     public void testNearestSoftVersionPrunedByFartherRange()
         throws Exception
     {
-        DependencyNode root = parseResource( "soft-vs-range.txt" );
+        DependencyNode<?> root = parseResource( "soft-vs-range.txt" );
 
         assertSame( root, transform( root ) );
 
@@ -171,7 +171,7 @@ public class NearestVersionSelectorTest
     public void testCyclicGraph()
         throws Exception
     {
-        DependencyNode root = parseResource( "cycle.txt" );
+        DependencyNode<?> root = parseResource( "cycle.txt" );
 
         assertSame( root, transform( root ) );
 
@@ -221,7 +221,7 @@ public class NearestVersionSelectorTest
     public void testVerboseMode()
         throws Exception
     {
-        DependencyNode root = parseResource( "verbose.txt" );
+        DependencyNode<?> root = parseResource( "verbose.txt" );
 
         session.setConfigProperty( ConflictResolver.CONFIG_PROP_VERBOSE, Boolean.TRUE );
         assertSame( root, transform( root ) );

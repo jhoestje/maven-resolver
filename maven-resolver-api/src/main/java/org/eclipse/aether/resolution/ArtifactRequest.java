@@ -33,7 +33,7 @@ import org.eclipse.aether.repository.RemoteRepository;
  * A request to resolve an artifact.
  * 
  * @see RepositorySystem#resolveArtifacts(org.eclipse.aether.RepositorySystemSession, java.util.Collection)
- * @see Artifact#getFile()
+ * @see Artifact#getStorage()
  */
 public final class ArtifactRequest
 {

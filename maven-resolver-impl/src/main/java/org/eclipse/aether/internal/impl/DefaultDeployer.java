@@ -259,7 +259,7 @@ public class DefaultDeployer
 
             for ( int i = 0; i < artifacts.size(); i++ )
             {
-                Artifact artifact = artifacts.get( i );
+                Artifact<File> artifact = artifacts.get( i );
 
                 for ( MetadataGenerator generator : generators )
                 {
@@ -276,7 +276,7 @@ public class DefaultDeployer
                     {
                         Artifact targetArtifact = fileTransformer.transformArtifact( artifact );
 
-                        ArtifactUpload upload = new ArtifactUpload( targetArtifact, artifact.getFile(),
+                        ArtifactUpload upload = new ArtifactUpload( targetArtifact, artifact.getStorage(),
                                 fileTransformer );
                         upload.setTrace( trace );
                         upload.setListener( new ArtifactUploadListener( catapult, upload ) );
@@ -285,7 +285,7 @@ public class DefaultDeployer
                 }
                 else
                 {
-                    ArtifactUpload upload = new ArtifactUpload( artifact, artifact.getFile() );
+                    ArtifactUpload upload = new ArtifactUpload( artifact, artifact.getStorage() );
                     upload.setTrace( trace );
                     upload.setListener( new ArtifactUploadListener( catapult, upload ) );
                     artifactUploads.add( upload );
@@ -504,7 +504,7 @@ public class DefaultDeployer
             return trace;
         }
 
-        public void artifactDeploying( Artifact artifact, File file )
+        public void artifactDeploying( Artifact<File> artifact, File file )
         {
             RepositoryEvent.Builder event = new RepositoryEvent.Builder( session, EventType.ARTIFACT_DEPLOYING );
             event.setTrace( trace );
@@ -515,7 +515,7 @@ public class DefaultDeployer
             dispatcher.dispatch( event.build() );
         }
 
-        public void artifactDeployed( Artifact artifact, File file, ArtifactTransferException exception )
+        public void artifactDeployed( Artifact<File> artifact, File file, ArtifactTransferException exception )
         {
             RepositoryEvent.Builder event = new RepositoryEvent.Builder( session, EventType.ARTIFACT_DEPLOYED );
             event.setTrace( trace );

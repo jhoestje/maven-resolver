@@ -53,10 +53,10 @@ public class DeployArtifacts
 
         Artifact jarArtifact = new DefaultArtifact( "test", "org.apache.maven.aether.examples", "", 
             "jar", "0.1-SNAPSHOT" );
-        jarArtifact = jarArtifact.setFile( new File( "src/main/data/demo.jar" ) );
+        jarArtifact = jarArtifact.setStorage( new File( "src/main/data/demo.jar" ) );
 
         Artifact pomArtifact = new SubArtifact( jarArtifact, "", "pom" );
-        pomArtifact = pomArtifact.setFile( new File( "pom.xml" ) );
+        pomArtifact = pomArtifact.setStorage( new File( "pom.xml" ) );
 
         RemoteRepository distRepo =
             new RemoteRepository.Builder( "org.apache.maven.aether.examples", "default",

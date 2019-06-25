@@ -84,7 +84,7 @@ public class DefaultInstallerTest
         throws IOException
     {
         artifact = new DefaultArtifact( "gid", "aid", "jar", "ver" );
-        artifact = artifact.setFile( TestFileUtils.createTempFile( "artifact".getBytes(), 1 ) );
+        artifact = artifact.setStorage( TestFileUtils.createTempFile( "artifact".getBytes(), 1 ) );
         metadata =
             new DefaultMetadata( "gid", "aid", "ver", "type", Nature.RELEASE_OR_SNAPSHOT,
                                  TestFileUtils.createTempFile( "metadata".getBytes(), 1 ) );
@@ -157,7 +157,7 @@ public class DefaultInstallerTest
         throws InstallationException
     {
         InstallRequest request = new InstallRequest();
-        request.addArtifact( artifact.setFile( null ) );
+        request.addArtifact( artifact.setStorage( null ) );
 
         installer.install( session, request );
     }
@@ -177,7 +177,7 @@ public class DefaultInstallerTest
         throws InstallationException
     {
         InstallRequest request = new InstallRequest();
-        request.addArtifact( artifact.setFile( new File( "missing.txt" ) ) );
+        request.addArtifact( artifact.setStorage( new File( "missing.txt" ) ) );
 
         installer.install( session, request );
     }
@@ -225,7 +225,7 @@ public class DefaultInstallerTest
     {
         String path = session.getLocalRepositoryManager().getPathForLocalArtifact( artifact );
         File file = new File( session.getLocalRepository().getBasedir(), path );
-        artifact = artifact.setFile( file );
+        artifact = artifact.setStorage( file );
         TestFileUtils.writeString( file, "test" );
 
         request.addArtifact( artifact );
@@ -270,7 +270,7 @@ public class DefaultInstallerTest
     @Test
     public void testFailingEventsNullArtifactFile()
     {
-        checkFailedEvents( "null artifact file", this.artifact.setFile( null ) );
+        checkFailedEvents( "null artifact file", this.artifact.setStorage( null ) );
     }
 
     @Test
@@ -400,24 +400,24 @@ public class DefaultInstallerTest
     public void testSetArtifactTimestamps()
         throws InstallationException
     {
-        artifact.getFile().setLastModified( artifact.getFile().lastModified() - 60000 );
+        artifact.getStorage().setLastModified( artifact.getStorage().lastModified() - 60000 );
 
         request.addArtifact( artifact );
 
         installer.install( session, request );
 
-        assertEquals( "artifact timestamp was not set to src file", artifact.getFile().lastModified(),
+        assertEquals( "artifact timestamp was not set to src file", artifact.getStorage().lastModified(),
                       localArtifactFile.lastModified() );
 
         request = new InstallRequest();
 
         request.addArtifact( artifact );
 
-        artifact.getFile().setLastModified( artifact.getFile().lastModified() - 60000 );
+        artifact.getStorage().setLastModified( artifact.getStorage().lastModified() - 60000 );
 
         installer.install( session, request );
 
-        assertEquals( "artifact timestamp was not set to src file", artifact.getFile().lastModified(),
+        assertEquals( "artifact timestamp was not set to src file", artifact.getStorage().lastModified(),
                       localArtifactFile.lastModified() );
     }
     

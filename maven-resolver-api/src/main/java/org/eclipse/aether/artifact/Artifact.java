@@ -1,25 +1,5 @@
 package org.eclipse.aether.artifact;
 
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * 
- *  http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
-import java.io.File;
 import java.util.Map;
 
 /**
@@ -31,7 +11,7 @@ import java.util.Map;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface Artifact
+public interface Artifact<T extends Object>
 {
 
     /**
@@ -63,7 +43,7 @@ public interface Artifact
      * @param version The version of this artifact, may be {@code null} or empty.
      * @return The new artifact, never {@code null}.
      */
-    Artifact setVersion( String version );
+    Artifact<T> setVersion( String version );
 
     /**
      * Gets the base version of this artifact, for example "1.0-SNAPSHOT". In contrast to the {@link #getVersion()}, the
@@ -100,7 +80,7 @@ public interface Artifact
      * 
      * @return The file or {@code null} if the artifact isn't resolved.
      */
-    File getFile();
+    T getStorage();
 
     /**
      * Sets the file of the artifact.
@@ -108,7 +88,7 @@ public interface Artifact
      * @param file The file of the artifact, may be {@code null}
      * @return The new artifact, never {@code null}.
      */
-    Artifact setFile( File file );
+    Artifact<T> setStorage( T file );
 
     /**
      * Gets the specified property.
@@ -138,6 +118,6 @@ public interface Artifact
      * @return The new artifact, never {@code null}.
      * @see ArtifactProperties
      */
-    Artifact setProperties( Map<String, String> properties );
+    Artifact<T> setProperties( Map<String, String> properties );
 
 }

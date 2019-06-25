@@ -21,6 +21,7 @@ package org.eclipse.aether.util.graph.visitor;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.List;
 
 import org.eclipse.aether.graph.DependencyNode;
@@ -30,18 +31,18 @@ import org.junit.Test;
 public class PreorderNodeListGeneratorTest
 {
 
-    private DependencyNode parse( String resource )
+    private DependencyNode<File> parse( String resource )
         throws Exception
     {
         return new DependencyGraphParser( "visitor/ordered-list/" ).parseResource( resource );
     }
 
-    private void assertSequence( List<DependencyNode> actual, String... expected )
+    private void assertSequence( List<DependencyNode<File>> actual, String... expected )
     {
         assertEquals( actual.toString(), expected.length, actual.size() );
         for ( int i = 0; i < expected.length; i++ )
         {
-            DependencyNode node = actual.get( i );
+            DependencyNode<File> node = actual.get( i );
             assertEquals( actual.toString(), expected[i], node.getDependency().getArtifact().getArtifactId() );
         }
     }
@@ -50,7 +51,7 @@ public class PreorderNodeListGeneratorTest
     public void testOrdering()
         throws Exception
     {
-        DependencyNode root = parse( "simple.txt" );
+        DependencyNode<File> root = parse( "simple.txt" );
 
         PreorderNodeListGenerator visitor = new PreorderNodeListGenerator();
         root.accept( visitor );
@@ -62,7 +63,7 @@ public class PreorderNodeListGeneratorTest
     public void testDuplicateSuppression()
         throws Exception
     {
-        DependencyNode root = parse( "cycles.txt" );
+        DependencyNode<File> root = parse( "cycles.txt" );
 
         PreorderNodeListGenerator visitor = new PreorderNodeListGenerator();
         root.accept( visitor );

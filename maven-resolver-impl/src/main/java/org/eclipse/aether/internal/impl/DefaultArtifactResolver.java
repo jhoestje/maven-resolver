@@ -267,7 +267,7 @@ public class DefaultArtifactResolver
                 }
                 else
                 {
-                    artifact = artifact.setFile( file );
+                    artifact = artifact.setStorage( file );
                     result.setArtifact( artifact );
                     artifactResolved( session, trace, artifact, null, result.getExceptions() );
                 }
@@ -306,7 +306,7 @@ public class DefaultArtifactResolver
                 File file = workspace.findArtifact( artifact );
                 if ( file != null )
                 {
-                    artifact = artifact.setFile( file );
+                    artifact = artifact.setStorage( file );
                     result.setArtifact( artifact );
                     result.setRepository( workspace.getRepository() );
                     artifactResolved( session, trace, artifact, result.getRepository(), null );
@@ -328,7 +328,7 @@ public class DefaultArtifactResolver
                 }
                 try
                 {
-                    artifact = artifact.setFile( getFile( session, artifact, local.getFile() ) );
+                    artifact = artifact.setStorage( getFile( session, artifact, local.getFile() ) );
                     result.setArtifact( artifact );
                     artifactResolved( session, trace, artifact, result.getRepository(), null );
                 }
@@ -406,7 +406,7 @@ public class DefaultArtifactResolver
             ArtifactRequest request = result.getRequest();
 
             Artifact artifact = result.getArtifact();
-            if ( artifact == null || artifact.getFile() == null )
+            if ( artifact == null || artifact.getStorage() == null )
             {
                 failures = true;
                 if ( result.getExceptions().isEmpty() )
@@ -449,7 +449,7 @@ public class DefaultArtifactResolver
         return false;
     }
 
-    private File getFile( RepositorySystemSession session, Artifact artifact, File file )
+    private File getFile( RepositorySystemSession session, Artifact<?> artifact, File file )
         throws ArtifactTransferException
     {
         if ( artifact.isSnapshot() && !artifact.getVersion().equals( artifact.getBaseVersion() )
@@ -517,7 +517,7 @@ public class DefaultArtifactResolver
 
         for ( ResolutionItem item : group.items )
         {
-            Artifact artifact = item.artifact;
+            Artifact<?> artifact = item.artifact;
 
             if ( item.resolved.get() )
             {
@@ -549,7 +549,7 @@ public class DefaultArtifactResolver
             int errorPolicy = Utils.getPolicy( session, artifact, group.repository );
             if ( ( errorPolicy & ResolutionErrorPolicy.CACHE_ALL ) != 0 )
             {
-                UpdateCheck<Artifact, ArtifactTransferException> check = new UpdateCheck<>();
+                UpdateCheck<Artifact<?>, ArtifactTransferException> check = new UpdateCheck<>();
                 check.setItem( artifact );
                 check.setFile( download.getFile() );
                 check.setFileValid( false );
@@ -585,14 +585,14 @@ public class DefaultArtifactResolver
                 continue;
             }
 
-            Artifact artifact = download.getArtifact();
+            Artifact<?> artifact = download.getArtifact();
             if ( download.getException() == null )
             {
                 item.resolved.set( true );
                 item.result.setRepository( group.repository );
                 try
                 {
-                    artifact = artifact.setFile( getFile( session, artifact, download.getFile() ) );
+                    artifact = artifact.setStorage( getFile( session, artifact, download.getFile() ) );
                     item.result.setArtifact( artifact );
 
                     lrm.add( session, new LocalArtifactRegistration(
@@ -627,7 +627,7 @@ public class DefaultArtifactResolver
         }
     }
 
-    private void artifactResolving( RepositorySystemSession session, RequestTrace trace, Artifact artifact )
+    private void artifactResolving( RepositorySystemSession session, RequestTrace trace, Artifact<File> artifact )
     {
         RepositoryEvent.Builder event = new RepositoryEvent.Builder( session, EventType.ARTIFACT_RESOLVING );
         event.setTrace( trace );
@@ -636,7 +636,7 @@ public class DefaultArtifactResolver
         repositoryEventDispatcher.dispatch( event.build() );
     }
 
-    private void artifactResolved( RepositorySystemSession session, RequestTrace trace, Artifact artifact,
+    private void artifactResolved( RepositorySystemSession session, RequestTrace trace, Artifact<File> artifact,
                                    ArtifactRepository repository, List<Exception> exceptions )
     {
         RepositoryEvent.Builder event = new RepositoryEvent.Builder( session, EventType.ARTIFACT_RESOLVED );
@@ -646,13 +646,13 @@ public class DefaultArtifactResolver
         event.setExceptions( exceptions );
         if ( artifact != null )
         {
-            event.setFile( artifact.getFile() );
+            event.setFile( artifact.getStorage() );
         }
 
         repositoryEventDispatcher.dispatch( event.build() );
     }
 
-    private void artifactDownloading( RepositorySystemSession session, RequestTrace trace, Artifact artifact,
+    private void artifactDownloading( RepositorySystemSession session, RequestTrace trace, Artifact<File> artifact,
                                       RemoteRepository repository )
     {
         RepositoryEvent.Builder event = new RepositoryEvent.Builder( session, EventType.ARTIFACT_DOWNLOADING );
@@ -663,7 +663,7 @@ public class DefaultArtifactResolver
         repositoryEventDispatcher.dispatch( event.build() );
     }
 
-    private void artifactDownloaded( RepositorySystemSession session, RequestTrace trace, Artifact artifact,
+    private void artifactDownloaded( RepositorySystemSession session, RequestTrace trace, Artifact<File> artifact,
                                      RemoteRepository repository, Exception exception )
     {
         RepositoryEvent.Builder event = new RepositoryEvent.Builder( session, EventType.ARTIFACT_DOWNLOADED );
@@ -673,7 +673,7 @@ public class DefaultArtifactResolver
         event.setException( exception );
         if ( artifact != null )
         {
-            event.setFile( artifact.getFile() );
+            event.setFile( artifact.getStorage() );
         }
 
         repositoryEventDispatcher.dispatch( event.build() );

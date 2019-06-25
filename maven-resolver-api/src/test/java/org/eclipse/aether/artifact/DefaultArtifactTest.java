@@ -106,7 +106,7 @@ public class DefaultArtifactTest
     public void testImmutability()
     {
         Artifact a = new DefaultArtifact( "gid:aid:ext:cls:ver" );
-        assertNotSame( a, a.setFile( new File( "file" ) ) );
+        assertNotSame( a, a.setStorage( new File( "file" ) ) );
         assertNotSame( a, a.setVersion( "otherVersion" ) );
         assertNotSame( a, a.setProperties( Collections.singletonMap( "key", "value" ) ) );
     }

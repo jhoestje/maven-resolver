@@ -63,7 +63,7 @@ public class DefaultUpdateCheckManagerTest
 
     private RemoteRepository repository;
 
-    private Artifact artifact;
+    private Artifact<File> artifact;
 
     @Before
     public void setup()
@@ -84,7 +84,7 @@ public class DefaultUpdateCheckManagerTest
         metadata =
             new DefaultMetadata( "gid", "aid", "ver", "maven-metadata.xml", Metadata.Nature.RELEASE_OR_SNAPSHOT,
                                  metadataFile );
-        artifact = new DefaultArtifact( "gid", "aid", "", "ext", "ver" ).setFile( artifactFile );
+        artifact = new DefaultArtifact<File>( "gid", "aid", "", "ext", "ver" ).setStorage( artifactFile );
     }
 
     @After
@@ -92,9 +92,9 @@ public class DefaultUpdateCheckManagerTest
         throws Exception
     {
         new File( metadata.getFile().getParent(), "resolver-status.properties" ).delete();
-        new File( artifact.getFile().getPath() + ".lastUpdated" ).delete();
+        new File( artifact.getStorage().getPath() + ".lastUpdated" ).delete();
         metadata.getFile().delete();
-        artifact.getFile().delete();
+        artifact.getStorage().delete();
         TestFileUtils.deleteFile( new File( new URI( repository.getUrl() ) ) );
     }
 
@@ -114,11 +114,11 @@ public class DefaultUpdateCheckManagerTest
         return check;
     }
 
-    private UpdateCheck<Artifact, ArtifactTransferException> newArtifactCheck()
+    private UpdateCheck<Artifact<?>, ArtifactTransferException> newArtifactCheck()
     {
-        UpdateCheck<Artifact, ArtifactTransferException> check = new UpdateCheck<>();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = new UpdateCheck<>();
         check.setItem( artifact );
-        check.setFile( artifact.getFile() );
+        check.setFile( artifact.getStorage() );
         check.setRepository( repository );
         check.setPolicy( RepositoryPolicy.UPDATE_POLICY_INTERVAL + ":10" );
         return check;
@@ -453,8 +453,8 @@ public class DefaultUpdateCheckManagerTest
     @Test( expected = NullPointerException.class )
     public void testCheckArtifactFailOnNoFile()
     {
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
-        check.setItem( artifact.setFile( null ) );
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
+        check.setItem( artifact.setStorage( null ) );
         check.setFile( null );
 
         manager.checkArtifact( session, check );
@@ -464,14 +464,14 @@ public class DefaultUpdateCheckManagerTest
     @Test
     public void testCheckArtifactUpdatePolicyRequired()
     {
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
         check.setItem( artifact );
-        check.setFile( artifact.getFile() );
+        check.setFile( artifact.getStorage() );
 
         Calendar cal = Calendar.getInstance( TimeZone.getTimeZone( "UTC" ) );
         cal.add( Calendar.DATE, -1 );
         long lastUpdate = cal.getTimeInMillis();
-        artifact.getFile().setLastModified( lastUpdate );
+        artifact.getStorage().setLastModified( lastUpdate );
         check.setLocalLastUpdated( lastUpdate );
 
         check.setPolicy( RepositoryPolicy.UPDATE_POLICY_ALWAYS );
@@ -493,9 +493,9 @@ public class DefaultUpdateCheckManagerTest
     @Test
     public void testCheckArtifactUpdatePolicyNotRequired()
     {
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
         check.setItem( artifact );
-        check.setFile( artifact.getFile() );
+        check.setFile( artifact.getStorage() );
 
         Calendar cal = Calendar.getInstance( TimeZone.getTimeZone( "UTC" ) );
         cal.add( Calendar.HOUR_OF_DAY, -1 );
@@ -521,7 +521,7 @@ public class DefaultUpdateCheckManagerTest
     @Test
     public void testCheckArtifact()
     {
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
         long fifteenMinutes = new Date().getTime() - ( 15L * 60L * 1000L );
         check.getFile().setLastModified( fifteenMinutes );
         // time is truncated on setLastModfied
@@ -550,8 +550,8 @@ public class DefaultUpdateCheckManagerTest
     @Test
     public void testCheckArtifactNoLocalFile()
     {
-        artifact.getFile().delete();
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
+        artifact.getStorage().delete();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
 
         long lastUpdate = new Date().getTime() - HOUR;
 
@@ -564,10 +564,10 @@ public class DefaultUpdateCheckManagerTest
     @Test
     public void testCheckArtifactNotFoundInRepoCachingEnabled()
     {
-        artifact.getFile().delete();
+        artifact.getStorage().delete();
         session.setResolutionErrorPolicy( new SimpleResolutionErrorPolicy( true, false ) );
 
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
         check.setException( new ArtifactNotFoundException( artifact, repository ) );
         manager.touchArtifact( session, check );
         resetSessionData( session );
@@ -583,10 +583,10 @@ public class DefaultUpdateCheckManagerTest
     @Test
     public void testCheckArtifactNotFoundInRepoCachingDisabled()
     {
-        artifact.getFile().delete();
+        artifact.getStorage().delete();
         session.setResolutionErrorPolicy( new SimpleResolutionErrorPolicy( false, false ) );
 
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
         check.setException( new ArtifactNotFoundException( artifact, repository ) );
         manager.touchArtifact( session, check );
         resetSessionData( session );
@@ -601,9 +601,9 @@ public class DefaultUpdateCheckManagerTest
     @Test
     public void testCheckArtifactErrorFromRepoCachingEnabled()
     {
-        artifact.getFile().delete();
+        artifact.getStorage().delete();
 
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
         check.setPolicy( RepositoryPolicy.UPDATE_POLICY_DAILY );
         check.setException( new ArtifactTransferException( artifact, repository, "some error" ) );
         manager.touchArtifact( session, check );
@@ -621,9 +621,9 @@ public class DefaultUpdateCheckManagerTest
     @Test
     public void testCheckArtifactErrorFromRepoCachingDisabled()
     {
-        artifact.getFile().delete();
+        artifact.getStorage().delete();
 
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
         check.setPolicy( RepositoryPolicy.UPDATE_POLICY_DAILY );
         check.setException( new ArtifactTransferException( artifact, repository, "some error" ) );
         manager.touchArtifact( session, check );
@@ -640,7 +640,7 @@ public class DefaultUpdateCheckManagerTest
     @Test
     public void testCheckArtifactAtMostOnceDuringSessionEvenIfUpdatePolicyAlways()
     {
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
         check.setPolicy( RepositoryPolicy.UPDATE_POLICY_ALWAYS );
 
         // first check
@@ -657,7 +657,7 @@ public class DefaultUpdateCheckManagerTest
     @Test
     public void testCheckArtifactSessionStateModes()
     {
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
         check.setPolicy( RepositoryPolicy.UPDATE_POLICY_ALWAYS );
         manager.touchArtifact( session, check );
 
@@ -680,7 +680,7 @@ public class DefaultUpdateCheckManagerTest
     @Test
     public void testCheckArtifactAtMostOnceDuringSessionEvenIfUpdatePolicyAlways_InvalidFile()
     {
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
         check.setPolicy( RepositoryPolicy.UPDATE_POLICY_ALWAYS );
         check.setFileValid( false );
 
@@ -707,7 +707,7 @@ public class DefaultUpdateCheckManagerTest
     @Test
     public void testCheckArtifactAtMostOnceDuringSessionEvenIfUpdatePolicyAlways_DifferentRepoIdSameUrl()
     {
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
         check.setPolicy( RepositoryPolicy.UPDATE_POLICY_ALWAYS );
 
         // first check
@@ -725,7 +725,7 @@ public class DefaultUpdateCheckManagerTest
     @Test
     public void testCheckArtifactWhenLocallyMissingEvenIfUpdatePolicyIsNever()
     {
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
         check.setPolicy( RepositoryPolicy.UPDATE_POLICY_NEVER );
         session.setResolutionErrorPolicy( new SimpleResolutionErrorPolicy( true, false ) );
 
@@ -739,7 +739,7 @@ public class DefaultUpdateCheckManagerTest
     @Test
     public void testCheckArtifactWhenLocallyPresentButInvalidEvenIfUpdatePolicyIsNever()
     {
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
         check.setPolicy( RepositoryPolicy.UPDATE_POLICY_NEVER );
         session.setResolutionErrorPolicy( new SimpleResolutionErrorPolicy( true, false ) );
 
@@ -755,7 +755,7 @@ public class DefaultUpdateCheckManagerTest
     @Test
     public void testCheckArtifactWhenLocallyDeletedEvenIfTimestampUpToDate()
     {
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
         session.setResolutionErrorPolicy( new SimpleResolutionErrorPolicy( true, false ) );
 
         manager.touchArtifact( session, check );
@@ -771,7 +771,7 @@ public class DefaultUpdateCheckManagerTest
     @Test
     public void testCheckArtifactNotWhenUpdatePolicyIsNeverAndTimestampIsUnavailable()
     {
-        UpdateCheck<Artifact, ArtifactTransferException> check = newArtifactCheck();
+        UpdateCheck<Artifact<?>, ArtifactTransferException> check = newArtifactCheck();
         check.setPolicy( RepositoryPolicy.UPDATE_POLICY_NEVER );
         session.setResolutionErrorPolicy( new SimpleResolutionErrorPolicy( true, false ) );
 

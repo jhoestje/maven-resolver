@@ -44,9 +44,9 @@ abstract class AbstractDepthFirstNodeListGenerator
     implements DependencyVisitor
 {
 
-    private final Map<DependencyNode, Object> visitedNodes;
+    private final Map<DependencyNode<File>, Object> visitedNodes;
 
-    protected final List<DependencyNode> nodes;
+    protected final List<DependencyNode<File>> nodes;
 
     AbstractDepthFirstNodeListGenerator()
     {
@@ -59,7 +59,7 @@ abstract class AbstractDepthFirstNodeListGenerator
      * 
      * @return The list of dependency nodes, never {@code null}.
      */
-    public List<DependencyNode> getNodes()
+    public List<DependencyNode<File>> getNodes()
     {
         return nodes;
     }
@@ -74,12 +74,12 @@ abstract class AbstractDepthFirstNodeListGenerator
     {
         List<Dependency> dependencies = new ArrayList<>( getNodes().size() );
 
-        for ( DependencyNode node : getNodes() )
+        for ( DependencyNode<File> node : getNodes() )
         {
             Dependency dependency = node.getDependency();
             if ( dependency != null )
             {
-                if ( includeUnresolved || dependency.getArtifact().getFile() != null )
+                if ( includeUnresolved || dependency.getArtifact().getStorage() != null )
                 {
                     dependencies.add( dependency );
                 }
@@ -95,16 +95,17 @@ abstract class AbstractDepthFirstNodeListGenerator
      * @param includeUnresolved Whether unresolved artifacts shall be included in the result or not.
      * @return The list of artifacts, never {@code null}.
      */
-    public List<Artifact> getArtifacts( boolean includeUnresolved )
+    @SuppressWarnings("unchecked")
+	public List<Artifact<File>> getArtifacts( boolean includeUnresolved )
     {
-        List<Artifact> artifacts = new ArrayList<>( getNodes().size() );
+        List<Artifact<File>> artifacts = new ArrayList<>( getNodes().size() );
 
-        for ( DependencyNode node : getNodes() )
+        for ( DependencyNode<File> node : getNodes() )
         {
             if ( node.getDependency() != null )
             {
-                Artifact artifact = node.getDependency().getArtifact();
-                if ( includeUnresolved || artifact.getFile() != null )
+                Artifact<File> artifact = node.getDependency().getArtifact();
+                if ( includeUnresolved || artifact.getStorage() != null )
                 {
                     artifacts.add( artifact );
                 }
@@ -123,11 +124,12 @@ abstract class AbstractDepthFirstNodeListGenerator
     {
         List<File> files = new ArrayList<>( getNodes().size() );
 
-        for ( DependencyNode node : getNodes() )
+        for ( DependencyNode<File> node : getNodes() )
         {
             if ( node.getDependency() != null )
             {
-                File file = node.getDependency().getArtifact().getFile();
+            	Artifact<File> artifact = node.getDependency().getArtifact();
+                File file = artifact.getStorage();
                 if ( file != null )
                 {
                     files.add( file );
@@ -148,15 +150,16 @@ abstract class AbstractDepthFirstNodeListGenerator
     {
         StringBuilder buffer = new StringBuilder( 1024 );
 
-        for ( Iterator<DependencyNode> it = getNodes().iterator(); it.hasNext(); )
+        for ( Iterator<DependencyNode<File>> it = getNodes().iterator(); it.hasNext(); )
         {
             DependencyNode node = it.next();
             if ( node.getDependency() != null )
             {
-                Artifact artifact = node.getDependency().getArtifact();
-                if ( artifact.getFile() != null )
+                @SuppressWarnings("unchecked")
+				Artifact<File> artifact = node.getDependency().getArtifact();
+                if ( artifact.getStorage() != null )
                 {
-                    buffer.append( artifact.getFile().getAbsolutePath() );
+                    buffer.append( artifact.getStorage().getAbsolutePath() );
                     if ( it.hasNext() )
                     {
                         buffer.append( File.pathSeparatorChar );

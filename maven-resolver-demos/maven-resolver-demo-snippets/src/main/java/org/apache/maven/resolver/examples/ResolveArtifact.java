@@ -58,7 +58,7 @@ public class ResolveArtifact
 
         artifact = artifactResult.getArtifact();
 
-        System.out.println( artifact + " resolved to  " + artifact.getFile() );
+        System.out.println( artifact + " resolved to  " + artifact.getStorage() );
     }
 
 }

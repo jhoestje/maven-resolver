@@ -87,7 +87,7 @@ public class DefaultDeployerTest
         throws IOException
     {
         artifact = new DefaultArtifact( "gid", "aid", "jar", "ver" );
-        artifact = artifact.setFile( TestFileUtils.createTempFile( "artifact" ) );
+        artifact = artifact.setStorage( TestFileUtils.createTempFile( "artifact" ) );
         metadata =
             new DefaultMetadata( "gid", "aid", "ver", "type", Nature.RELEASE_OR_SNAPSHOT,
                                  TestFileUtils.createTempFile( "metadata" ) );
@@ -148,7 +148,7 @@ public class DefaultDeployerTest
     public void testNullArtifactFile()
         throws DeploymentException
     {
-        request.addArtifact( artifact.setFile( null ) );
+        request.addArtifact( artifact.setStorage( null ) );
         deployer.deploy( session, request );
     }
 
@@ -156,7 +156,7 @@ public class DefaultDeployerTest
     public void testNullMetadataFile()
         throws DeploymentException
     {
-        request.addArtifact( artifact.setFile( null ) );
+        request.addArtifact( artifact.setStorage( null ) );
         deployer.deploy( session, request );
     }
 

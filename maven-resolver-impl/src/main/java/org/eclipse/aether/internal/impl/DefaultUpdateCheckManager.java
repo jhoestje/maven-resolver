@@ -102,7 +102,7 @@ public class DefaultUpdateCheckManager
         return this;
     }
 
-    public void checkArtifact( RepositorySystemSession session, UpdateCheck<Artifact, ArtifactTransferException> check )
+    public void checkArtifact( RepositorySystemSession session, UpdateCheck<Artifact<?>, ArtifactTransferException> check )
     {
         if ( check.getLocalLastUpdated() != 0
             && !isUpdatedRequired( session, check.getLocalLastUpdated(), check.getPolicy() ) )
@@ -113,7 +113,7 @@ public class DefaultUpdateCheckManager
             return;
         }
 
-        Artifact artifact = check.getItem();
+        Artifact<?> artifact = check.getItem();
         RemoteRepository repository = check.getRepository();
 
         File artifactFile = requireNonNull( check.getFile(), String.format( "The artifact '%s' has no file attached",
@@ -211,7 +211,7 @@ public class DefaultUpdateCheckManager
         }
     }
 
-    private ArtifactTransferException newException( String error, Artifact artifact, RemoteRepository repository )
+    private ArtifactTransferException newException( String error, Artifact<?> artifact, RemoteRepository repository )
     {
         if ( error == null || error.length() <= 0 )
         {
@@ -359,7 +359,7 @@ public class DefaultUpdateCheckManager
         return props.getProperty( key + ERROR_KEY_SUFFIX );
     }
 
-    private File getTouchFile( Artifact artifact, File artifactFile )
+    private File getTouchFile( Artifact<?> artifact, File artifactFile )
     {
         return new File( artifactFile.getPath() + UPDATED_KEY_SUFFIX );
     }
@@ -369,7 +369,7 @@ public class DefaultUpdateCheckManager
         return new File( metadataFile.getParent(), "resolver-status.properties" );
     }
 
-    private String getDataKey( Artifact artifact, File artifactFile, RemoteRepository repository )
+    private String getDataKey( Artifact<?> artifact, File artifactFile, RemoteRepository repository )
     {
         Set<String> mirroredUrls = Collections.emptySet();
         if ( repository.isRepositoryManager() )
@@ -392,7 +392,7 @@ public class DefaultUpdateCheckManager
         return buffer.toString();
     }
 
-    private String getTransferKey( RepositorySystemSession session, Artifact artifact, File artifactFile,
+    private String getTransferKey( RepositorySystemSession session, Artifact<?> artifact, File artifactFile,
                                    RemoteRepository repository )
     {
         return getRepoKey( session, repository );
@@ -512,9 +512,9 @@ public class DefaultUpdateCheckManager
         return ( props != null ) ? props : new Properties();
     }
 
-    public void touchArtifact( RepositorySystemSession session, UpdateCheck<Artifact, ArtifactTransferException> check )
+    public void touchArtifact( RepositorySystemSession session, UpdateCheck<Artifact<?>, ArtifactTransferException> check )
     {
-        Artifact artifact = check.getItem();
+        Artifact<?> artifact = check.getItem();
         File artifactFile = check.getFile();
         File touchFile = getTouchFile( artifact, artifactFile );
 

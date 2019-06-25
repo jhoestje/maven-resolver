@@ -233,7 +233,7 @@ public class DefaultInstaller
     {
         LocalRepositoryManager lrm = session.getLocalRepositoryManager();
 
-        File srcFile = artifact.getFile();
+        File srcFile = artifact.getStorage();
 
         Collection<FileTransformer> fileTransformers = session.getFileTransformerManager()
                 .getTransformersForArtifact( artifact );

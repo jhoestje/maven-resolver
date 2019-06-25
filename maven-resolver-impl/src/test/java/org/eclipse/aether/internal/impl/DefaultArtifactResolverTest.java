@@ -137,8 +137,8 @@ public class DefaultArtifactResolverTest
         assertTrue( result.getExceptions().isEmpty() );
 
         Artifact resolved = result.getArtifact();
-        assertNotNull( resolved.getFile() );
-        resolved = resolved.setFile( null );
+        assertNotNull( resolved.getStorage() );
+        resolved = resolved.setStorage( null );
 
         assertEquals( artifact, resolved );
     }
@@ -193,9 +193,9 @@ public class DefaultArtifactResolverTest
         assertTrue( result.getExceptions().isEmpty() );
 
         Artifact resolved = result.getArtifact();
-        assertNotNull( resolved.getFile() );
+        assertNotNull( resolved.getStorage() );
 
-        resolved = resolved.setFile( null );
+        resolved = resolved.setStorage( null );
         assertEquals( artifact, resolved );
 
         connector.assertSeenExpected();
@@ -359,11 +359,11 @@ public class DefaultArtifactResolverTest
         assertTrue( result.getExceptions().isEmpty() );
 
         Artifact resolved = result.getArtifact();
-        assertNotNull( resolved.getFile() );
+        assertNotNull( resolved.getStorage() );
 
-        assertEquals( resolved.toString(), TestFileUtils.readString( resolved.getFile() ) );
+        assertEquals( resolved.toString(), TestFileUtils.readString( resolved.getStorage() ) );
 
-        resolved = resolved.setFile( null );
+        resolved = resolved.setStorage( null );
         assertEquals( artifact, resolved );
 
         connector.assertSeenExpected();
@@ -404,9 +404,9 @@ public class DefaultArtifactResolverTest
         assertTrue( "exception on resolveArtifact", result.getExceptions().isEmpty() );
 
         Artifact resolved = result.getArtifact();
-        assertNotNull( resolved.getFile() );
+        assertNotNull( resolved.getStorage() );
 
-        resolved = resolved.setFile( null );
+        resolved = resolved.setStorage( null );
         assertEquals( artifact, resolved );
 
         connector.assertSeenExpected();
@@ -437,7 +437,7 @@ public class DefaultArtifactResolverTest
         event = events.get( 1 );
         assertEquals( EventType.ARTIFACT_RESOLVED, event.getType() );
         assertNull( event.getException() );
-        assertEquals( artifact, event.getArtifact().setFile( null ) );
+        assertEquals( artifact, event.getArtifact().setStorage( null ) );
     }
 
     @Test
@@ -497,17 +497,17 @@ public class DefaultArtifactResolverTest
         event = events.get( 1 );
         assertEquals( EventType.ARTIFACT_DOWNLOADING, event.getType() );
         assertNull( event.getException() );
-        assertEquals( artifact, event.getArtifact().setFile( null ) );
+        assertEquals( artifact, event.getArtifact().setStorage( null ) );
 
         event = events.get( 2 );
         assertEquals( EventType.ARTIFACT_DOWNLOADED, event.getType() );
         assertNull( event.getException() );
-        assertEquals( artifact, event.getArtifact().setFile( null ) );
+        assertEquals( artifact, event.getArtifact().setStorage( null ) );
 
         event = events.get( 3 );
         assertEquals( EventType.ARTIFACT_RESOLVED, event.getType() );
         assertNull( event.getException() );
-        assertEquals( artifact, event.getArtifact().setFile( null ) );
+        assertEquals( artifact, event.getArtifact().setStorage( null ) );
     }
 
     @Test
@@ -725,9 +725,9 @@ public class DefaultArtifactResolverTest
         assertTrue( result.getExceptions().isEmpty() );
 
         Artifact resolved = result.getArtifact();
-        assertNotNull( resolved.getFile() );
+        assertNotNull( resolved.getStorage() );
 
-        resolved = resolved.setFile( null );
+        resolved = resolved.setStorage( null );
         assertEquals( artifact, resolved );
 
     }
@@ -809,9 +809,9 @@ public class DefaultArtifactResolverTest
         assertTrue( result.getExceptions().isEmpty() );
 
         Artifact resolved = result.getArtifact();
-        assertNotNull( resolved.getFile() );
+        assertNotNull( resolved.getStorage() );
 
-        resolved = resolved.setFile( null );
+        resolved = resolved.setStorage( null );
         assertEquals( artifact, resolved );
     }
 
@@ -892,9 +892,9 @@ public class DefaultArtifactResolverTest
         assertTrue( result.getExceptions().isEmpty() );
 
         Artifact resolved = result.getArtifact();
-        assertNotNull( resolved.getFile() );
+        assertNotNull( resolved.getStorage() );
 
-        resolved = resolved.setFile( null );
+        resolved = resolved.setStorage( null );
         assertEquals( artifact, resolved );
     }
 

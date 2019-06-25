@@ -21,6 +21,7 @@ package org.eclipse.aether.internal.test.util;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -118,12 +119,12 @@ public class DependencyGraphParserTest
             "gid1:aid1:ext1:ver1\n" + "+- gid2:aid2:ext2:ver2 scope2\n" + "|  \\- gid3:aid3:ext3:ver3\n"
                 + "\\- gid4:aid4:ext4:ver4 scope4";
 
-        DependencyNode node = parser.parseLiteral( def );
+        DependencyNode<File> node = parser.parseLiteral( def );
         assertNodeProperties( node, 1 );
 
         assertEquals( 2, node.getChildren().size() );
         assertNodeProperties( node.getChildren().get( 1 ), 4 );
-        DependencyNode lvl1Node = node.getChildren().get( 0 );
+        DependencyNode<File> lvl1Node = node.getChildren().get( 0 );
         assertNodeProperties( lvl1Node, 2 );
 
         assertEquals( 1, lvl1Node.getChildren().size() );
@@ -230,8 +231,8 @@ public class DependencyGraphParserTest
     {
         parser.setSubstitutions( Arrays.asList( "subst1", "subst2" ) );
         String def = "%s:%s:ext:ver";
-        DependencyNode root = parser.parseLiteral( def );
-        Artifact artifact = root.getDependency().getArtifact();
+        DependencyNode<File> root = parser.parseLiteral( def );
+        Artifact<File> artifact = root.getDependency().getArtifact();
         assertEquals( "subst2", artifact.getArtifactId() );
         assertEquals( "subst1", artifact.getGroupId() );
 
@@ -272,7 +273,7 @@ public class DependencyGraphParserTest
         throws IOException
     {
         String literal = "gid:aid:ext:ver\n+- (null)";
-        DependencyNode root = parser.parseLiteral( literal );
+        DependencyNode<File> root = parser.parseLiteral( literal );
 
         assertNotNull( root.getDependency() );
         assertEquals( 1, root.getChildren().size() );

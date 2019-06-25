@@ -35,19 +35,19 @@ import org.eclipse.aether.version.VersionConstraint;
 /**
  * A node within a dependency graph.
  */
-public final class DefaultDependencyNode
-    implements DependencyNode
+public final class DefaultDependencyNode<T>
+    implements DependencyNode<T>
 {
 
-    private List<DependencyNode> children;
+    private List<DependencyNode<T>> children;
 
     private Dependency dependency;
 
-    private Artifact artifact;
+    private Artifact<T> artifact;
 
-    private List<? extends Artifact> relocations;
+    private List<? extends Artifact<T>> relocations;
 
-    private Collection<? extends Artifact> aliases;
+    private Collection<? extends Artifact<T>> aliases;
 
     private VersionConstraint versionConstraint;
 
@@ -66,11 +66,12 @@ public final class DefaultDependencyNode
      * 
      * @param dependency The dependency associated with this node, may be {@code null} for a root node.
      */
-    public DefaultDependencyNode( Dependency dependency )
+    @SuppressWarnings("unchecked")
+	public DefaultDependencyNode( Dependency dependency )
     {
         this.dependency = dependency;
         artifact = ( dependency != null ) ? dependency.getArtifact() : null;
-        children = new ArrayList<DependencyNode>( 0 );
+        children = new ArrayList<DependencyNode<T>>( 0 );
         aliases = Collections.emptyList();
         relocations = Collections.emptyList();
         repositories = Collections.emptyList();
@@ -85,10 +86,10 @@ public final class DefaultDependencyNode
      * 
      * @param artifact The artifact to use as label for this node, may be {@code null}.
      */
-    public DefaultDependencyNode( Artifact artifact )
+    public DefaultDependencyNode( Artifact<T> artifact )
     {
         this.artifact = artifact;
-        children = new ArrayList<DependencyNode>( 0 );
+        children = new ArrayList<DependencyNode<T>>( 0 );
         aliases = Collections.emptyList();
         relocations = Collections.emptyList();
         repositories = Collections.emptyList();
@@ -102,7 +103,7 @@ public final class DefaultDependencyNode
      * 
      * @param node The node to copy, must not be {@code null}.
      */
-    public DefaultDependencyNode( DependencyNode node )
+    public DefaultDependencyNode( DependencyNode<T> node )
     {
         dependency = node.getDependency();
         artifact = node.getArtifact();
@@ -118,12 +119,12 @@ public final class DefaultDependencyNode
         setData( data.isEmpty() ? null : new HashMap<>( data ) );
     }
 
-    public List<DependencyNode> getChildren()
+    public List<DependencyNode<T>> getChildren()
     {
         return children;
     }
 
-    public void setChildren( List<DependencyNode> children )
+    public void setChildren( List<DependencyNode<T>> children )
     {
         if ( children == null )
         {
@@ -140,12 +141,13 @@ public final class DefaultDependencyNode
         return dependency;
     }
 
-    public Artifact getArtifact()
+    public Artifact<T> getArtifact()
     {
         return artifact;
     }
 
-    public void setArtifact( Artifact artifact )
+    @SuppressWarnings("unchecked")
+	public void setArtifact( Artifact<T> artifact )
     {
         if ( dependency == null )
         {
@@ -155,7 +157,7 @@ public final class DefaultDependencyNode
         this.artifact = dependency.getArtifact();
     }
 
-    public List<? extends Artifact> getRelocations()
+    public List<? extends Artifact<T>> getRelocations()
     {
         return relocations;
     }
@@ -165,7 +167,7 @@ public final class DefaultDependencyNode
      * 
      * @param relocations The sequence of relocations, may be {@code null}.
      */
-    public void setRelocations( List<? extends Artifact> relocations )
+    public void setRelocations( List<? extends Artifact<T>> relocations )
     {
         if ( relocations == null || relocations.isEmpty() )
         {
@@ -177,7 +179,7 @@ public final class DefaultDependencyNode
         }
     }
 
-    public Collection<? extends Artifact> getAliases()
+    public Collection<? extends Artifact<T>> getAliases()
     {
         return aliases;
     }
@@ -187,7 +189,7 @@ public final class DefaultDependencyNode
      * 
      * @param aliases The known aliases, may be {@code null}.
      */
-    public void setAliases( Collection<? extends Artifact> aliases )
+    public void setAliases( Collection<? extends Artifact<T>> aliases )
     {
         if ( aliases == null || aliases.isEmpty() )
         {
@@ -342,7 +344,7 @@ public final class DefaultDependencyNode
     {
         if ( visitor.visitEnter( this ) )
         {
-            for ( DependencyNode child : children )
+            for ( DependencyNode<T> child : children )
             {
                 if ( !child.accept( visitor ) )
                 {

@@ -50,9 +50,9 @@ import org.junit.Test;
 public class EnhancedLocalRepositoryManagerTest
 {
 
-    private Artifact artifact;
+    private Artifact<File> artifact;
 
-    private Artifact snapshot;
+    private Artifact<File> snapshot;
 
     private File basedir;
 
@@ -79,11 +79,11 @@ public class EnhancedLocalRepositoryManagerTest
             new RemoteRepository.Builder( "enhanced-remote-repo", "default", url ).setRepositoryManager( true ).build();
 
         artifact =
-            new DefaultArtifact( "gid", "aid", "", "jar", "1-test", Collections.<String, String> emptyMap(),
+            new DefaultArtifact<File>( "gid", "aid", "", "jar", "1-test", Collections.<String, String> emptyMap(),
                                  TestFileUtils.createTempFile( "artifact" ) );
 
         snapshot =
-            new DefaultArtifact( "gid", "aid", "", "jar", "1.0-20120710.231549-9",
+            new DefaultArtifact<File>( "gid", "aid", "", "jar", "1.0-20120710.231549-9",
                                  Collections.<String, String> emptyMap(), TestFileUtils.createTempFile( "artifact" ) );
 
         metadata =
@@ -114,7 +114,7 @@ public class EnhancedLocalRepositoryManagerTest
         artifact = null;
     }
 
-    private long addLocalArtifact( Artifact artifact )
+    private long addLocalArtifact( Artifact<File> artifact )
         throws IOException
     {
         manager.add( session, new LocalArtifactRegistration( artifact ) );
@@ -123,7 +123,7 @@ public class EnhancedLocalRepositoryManagerTest
         return copy( artifact, path );
     }
 
-    private long addRemoteArtifact( Artifact artifact )
+    private long addRemoteArtifact( Artifact<File> artifact )
         throws IOException
     {
         Collection<String> contexts = Arrays.asList( testContext );
@@ -142,25 +142,25 @@ public class EnhancedLocalRepositoryManagerTest
         return TestFileUtils.copyFile( metadata.getFile(), new File( basedir, path ) );
     }
 
-    private long copy( Artifact artifact, String path )
+    private long copy( Artifact<File> artifact, String path )
         throws IOException
     {
-        if ( artifact.getFile() == null )
+        if ( artifact.getStorage() == null )
         {
             return -1L;
         }
         File artifactFile = new File( basedir, path );
-        return TestFileUtils.copyFile( artifact.getFile(), artifactFile );
+        return TestFileUtils.copyFile( artifact.getStorage(), artifactFile );
     }
 
     @Test
     public void testGetPathForLocalArtifact()
     {
-        Artifact artifact = new DefaultArtifact( "g.i.d:a.i.d:1.0-SNAPSHOT" );
+        Artifact<File> artifact = new DefaultArtifact<File>( "g.i.d:a.i.d:1.0-SNAPSHOT" );
         assertEquals( "1.0-SNAPSHOT", artifact.getBaseVersion() );
         assertEquals( "g/i/d/a.i.d/1.0-SNAPSHOT/a.i.d-1.0-SNAPSHOT.jar", manager.getPathForLocalArtifact( artifact ) );
 
-        artifact = new DefaultArtifact( "g.i.d:a.i.d:1.0-20110329.221805-4" );
+        artifact = new DefaultArtifact<File>( "g.i.d:a.i.d:1.0-20110329.221805-4" );
         assertEquals( "1.0-SNAPSHOT", artifact.getBaseVersion() );
         assertEquals( "g/i/d/a.i.d/1.0-SNAPSHOT/a.i.d-1.0-SNAPSHOT.jar", manager.getPathForLocalArtifact( artifact ) );
     }
@@ -170,12 +170,12 @@ public class EnhancedLocalRepositoryManagerTest
     {
         RemoteRepository remoteRepo = new RemoteRepository.Builder( "repo", "default", "ram:/void" ).build();
 
-        Artifact artifact = new DefaultArtifact( "g.i.d:a.i.d:1.0-SNAPSHOT" );
+        Artifact<File> artifact = new DefaultArtifact<File>( "g.i.d:a.i.d:1.0-SNAPSHOT" );
         assertEquals( "1.0-SNAPSHOT", artifact.getBaseVersion() );
         assertEquals( "g/i/d/a.i.d/1.0-SNAPSHOT/a.i.d-1.0-SNAPSHOT.jar",
                       manager.getPathForRemoteArtifact( artifact, remoteRepo, "" ) );
 
-        artifact = new DefaultArtifact( "g.i.d:a.i.d:1.0-20110329.221805-4" );
+        artifact = new DefaultArtifact<File>( "g.i.d:a.i.d:1.0-20110329.221805-4" );
         assertEquals( "1.0-SNAPSHOT", artifact.getBaseVersion() );
         assertEquals( "g/i/d/a.i.d/1.0-SNAPSHOT/a.i.d-1.0-20110329.221805-4.jar",
                       manager.getPathForRemoteArtifact( artifact, remoteRepo, "" ) );
@@ -235,7 +235,7 @@ public class EnhancedLocalRepositoryManagerTest
     public void testDoNotFindNullFile()
         throws Exception
     {
-        artifact = artifact.setFile( null );
+        artifact = artifact.setStorage( null );
         addLocalArtifact( artifact );
 
         LocalArtifactRequest request = new LocalArtifactRequest( artifact, Arrays.asList( repository ), testContext );
@@ -327,7 +327,7 @@ public class EnhancedLocalRepositoryManagerTest
     public void testFindArtifactUsesTimestampedVersion()
         throws Exception
     {
-        Artifact artifact = new DefaultArtifact( "g.i.d:a.i.d:1.0-SNAPSHOT" );
+        Artifact<File> artifact = new DefaultArtifact<File>( "g.i.d:a.i.d:1.0-SNAPSHOT" );
         File file = new File( basedir, manager.getPathForLocalArtifact( artifact ) );
         TestFileUtils.writeString( file, "test" );
         addLocalArtifact( artifact );

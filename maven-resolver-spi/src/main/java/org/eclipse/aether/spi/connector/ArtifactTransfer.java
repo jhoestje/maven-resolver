@@ -33,7 +33,7 @@ public abstract class ArtifactTransfer
     extends Transfer
 {
 
-    private Artifact artifact;
+    private Artifact<File> artifact;
 
     private File file;
 
@@ -49,7 +49,7 @@ public abstract class ArtifactTransfer
      * 
      * @return The artifact being transferred or {@code null} if not set.
      */
-    public Artifact getArtifact()
+    public Artifact<File> getArtifact()
     {
         return artifact;
     }
@@ -60,7 +60,7 @@ public abstract class ArtifactTransfer
      * @param artifact The artifact, may be {@code null}.
      * @return This transfer for chaining, never {@code null}.
      */
-    public ArtifactTransfer setArtifact( Artifact artifact )
+    public ArtifactTransfer setArtifact( Artifact<File> artifact )
     {
         this.artifact = artifact;
         return this;

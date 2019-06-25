@@ -62,9 +62,9 @@ public class ResolverDemo
         Resolver resolver = new Resolver( "http://localhost:8081/nexus/content/groups/public", "target/aether-repo" );
         
         Artifact artifact = new DefaultArtifact( "com.mycompany.super", "super-core", "jar", "0.1-SNAPSHOT" );
-        artifact = artifact.setFile( new File( "jar-from-whatever-process.jar" ) );
+        artifact = artifact.setStorage( new File( "jar-from-whatever-process.jar" ) );
         Artifact pom = new SubArtifact( artifact, null, "pom" );
-        pom = pom.setFile( new File( "pom-from-whatever-process.xml" ) );
+        pom = pom.setStorage( new File( "pom-from-whatever-process.xml" ) );
           
         // Install into the local repository specified
         //

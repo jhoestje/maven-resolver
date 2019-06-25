@@ -33,7 +33,7 @@ import org.eclipse.aether.transfer.ArtifactNotFoundException;
  * The result of an artifact resolution request.
  * 
  * @see RepositorySystem#resolveArtifacts(org.eclipse.aether.RepositorySystemSession, java.util.Collection)
- * @see Artifact#getFile()
+ * @see Artifact#getStorage()
  */
 public final class ArtifactResult
 {
@@ -151,11 +151,11 @@ public final class ArtifactResult
      * of the specified remote repositories.
      * 
      * @return {@code true} if the artifact was resolved, {@code false} otherwise.
-     * @see Artifact#getFile()
+     * @see Artifact#getStorage()
      */
     public boolean isResolved()
     {
-        return getArtifact() != null && getArtifact().getFile() != null;
+        return getArtifact() != null && getArtifact().getStorage() != null;
     }
 
     /**

@@ -38,7 +38,7 @@ import org.eclipse.aether.version.VersionConstraint;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface DependencyNode
+public interface DependencyNode<T>
 {
 
     /**
@@ -84,14 +84,14 @@ public interface DependencyNode
      * 
      * @return The child nodes of this node, never {@code null}.
      */
-    List<DependencyNode> getChildren();
+    List<DependencyNode<T>> getChildren();
 
     /**
      * Sets the child nodes of this node.
      * 
      * @param children The child nodes, may be {@code null}
      */
-    void setChildren( List<DependencyNode> children );
+    void setChildren( List<DependencyNode<T>> children );
 
     /**
      * Gets the dependency associated with this node. <em>Note:</em> For dependency graphs that have been constructed
@@ -109,7 +109,7 @@ public interface DependencyNode
      * 
      * @return The associated artifact or {@code null} if none.
      */
-    Artifact getArtifact();
+    Artifact<T> getArtifact();
 
     /**
      * Updates the artifact of the dependency after resolution. The new artifact must have the same coordinates as the
@@ -118,14 +118,14 @@ public interface DependencyNode
      * 
      * @param artifact The artifact satisfying the dependency, must not be {@code null}.
      */
-    void setArtifact( Artifact artifact );
+    void setArtifact( Artifact<T> artifact );
 
     /**
      * Gets the sequence of relocations that was followed to resolve the artifact referenced by the dependency.
      * 
      * @return The (read-only) sequence of relocations, never {@code null}.
      */
-    List<? extends Artifact> getRelocations();
+    List<? extends Artifact<T>> getRelocations();
 
     /**
      * Gets the known aliases for this dependency's artifact. An alias can be used to mark a patched rebuild of some
@@ -134,7 +134,7 @@ public interface DependencyNode
      * 
      * @return The (read-only) set of known aliases, never {@code null}.
      */
-    Collection<? extends Artifact> getAliases();
+    Collection<? extends Artifact<T>> getAliases();
 
     /**
      * Gets the version constraint that was parsed from the dependency's version declaration.

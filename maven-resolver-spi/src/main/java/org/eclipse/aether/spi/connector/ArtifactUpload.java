@@ -50,7 +50,7 @@ public final class ArtifactUpload
      * @param artifact The artifact to upload, may be {@code null}.
      * @param file The local file to upload the artifact from, may be {@code null}.
      */
-    public ArtifactUpload( Artifact artifact, File file )
+    public ArtifactUpload( Artifact<File> artifact, File file )
     {
         setArtifact( artifact );
         setFile( file );
@@ -67,7 +67,7 @@ public final class ArtifactUpload
      * @param file The local file to upload the artifact from, may be {@code null}.
      * @param fileTransformer The file transformer, may be {@code null}.
      */
-    public ArtifactUpload( Artifact artifact, File file, FileTransformer fileTransformer )
+    public ArtifactUpload( Artifact<File> artifact, File file, FileTransformer fileTransformer )
     {
         setArtifact( artifact );
         setFile( file );
@@ -75,7 +75,7 @@ public final class ArtifactUpload
     }
 
     @Override
-    public ArtifactUpload setArtifact( Artifact artifact )
+    public ArtifactUpload setArtifact( Artifact<File> artifact )
     {
         super.setArtifact( artifact );
         return this;

@@ -48,7 +48,7 @@ public interface ArtifactResolver
      * @param request The resolution request, must not be {@code null}.
      * @return The resolution result, never {@code null}.
      * @throws ArtifactResolutionException If the artifact could not be resolved.
-     * @see Artifact#getFile()
+     * @see Artifact#getStorage()
      * @see RepositorySystem#resolveArtifact(RepositorySystemSession, ArtifactRequest)
      */
     ArtifactResult resolveArtifact( RepositorySystemSession session, ArtifactRequest request )
@@ -63,7 +63,7 @@ public interface ArtifactResolver
      * @param requests The resolution requests, must not be {@code null}.
      * @return The resolution results (in request order), never {@code null}.
      * @throws ArtifactResolutionException If any artifact could not be resolved.
-     * @see Artifact#getFile()
+     * @see Artifact#getStorage()
      * @see RepositorySystem#resolveArtifacts(RepositorySystemSession, Collection)
      */
     List<ArtifactResult> resolveArtifacts( RepositorySystemSession session,

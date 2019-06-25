@@ -47,7 +47,7 @@ public class SimpleOptionalitySelectorTest
     public void testDeriveOptionality()
         throws Exception
     {
-        DependencyNode root = parseResource( "derive.txt" );
+        DependencyNode<?> root = parseResource( "derive.txt" );
         assertSame( root, transform( root ) );
 
         assertEquals( 2, root.getChildren().size() );
@@ -61,7 +61,7 @@ public class SimpleOptionalitySelectorTest
     public void testResolveOptionalityConflict_NonOptionalWins()
         throws Exception
     {
-        DependencyNode root = parseResource( "conflict.txt" );
+        DependencyNode<?> root = parseResource( "conflict.txt" );
         assertSame( root, transform( root ) );
 
         assertEquals( 2, root.getChildren().size() );
@@ -73,7 +73,7 @@ public class SimpleOptionalitySelectorTest
     public void testResolveOptionalityConflict_DirectDeclarationWins()
         throws Exception
     {
-        DependencyNode root = parseResource( "conflict-direct-dep.txt" );
+        DependencyNode<?> root = parseResource( "conflict-direct-dep.txt" );
         assertSame( root, transform( root ) );
 
         assertEquals( 2, root.getChildren().size() );

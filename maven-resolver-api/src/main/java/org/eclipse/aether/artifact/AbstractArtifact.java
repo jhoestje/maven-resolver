@@ -1,25 +1,5 @@
 package org.eclipse.aether.artifact;
 
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * 
- *  http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
-import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +10,8 @@ import java.util.regex.Pattern;
 /**
  * A skeleton class for artifacts.
  */
-public abstract class AbstractArtifact
-    implements Artifact
+public abstract class AbstractArtifact<T>
+    implements Artifact<T>
 {
 
     private static final String SNAPSHOT = "SNAPSHOT";
@@ -97,25 +77,25 @@ public abstract class AbstractArtifact
      * @param file The resolved file of the artifact, may be {@code null}.
      * @return The new artifact instance, never {@code null}.
      */
-    private Artifact newInstance( String version, Map<String, String> properties, File file )
-    {
-        return new DefaultArtifact( getGroupId(), getArtifactId(), getClassifier(), getExtension(), version, file,
-                                    properties );
-    }
+    protected abstract Artifact<T> newInstance( String version, Map<String, String> properties, T file );
+//    {
+//        return new DefaultArtifact( getGroupId(), getArtifactId(), getClassifier(), getExtension(), version, file,
+//                                    properties );
+//    }
 
-    public Artifact setVersion( String version )
+    public Artifact<T> setVersion( String version )
     {
         String current = getVersion();
         if ( current.equals( version ) || ( version == null && current.length() <= 0 ) )
         {
             return this;
         }
-        return newInstance( version, getProperties(), getFile() );
+        return newInstance( version, getProperties(), getStorage() );
     }
 
-    public Artifact setFile( File file )
+    public Artifact<T> setStorage( T file )
     {
-        File current = getFile();
+        T current = getStorage();
         if ( Objects.equals( current, file ) )
         {
             return this;
@@ -123,14 +103,14 @@ public abstract class AbstractArtifact
         return newInstance( getVersion(), getProperties(), file );
     }
 
-    public Artifact setProperties( Map<String, String> properties )
+    public Artifact<T> setProperties( Map<String, String> properties )
     {
         Map<String, String> current = getProperties();
         if ( current.equals( properties ) || ( properties == null && current.isEmpty() ) )
         {
             return this;
         }
-        return newInstance( getVersion(), copyProperties( properties ), getFile() );
+        return newInstance( getVersion(), copyProperties( properties ), getStorage() );
     }
 
     public String getProperty( String key, String defaultValue )
@@ -192,14 +172,15 @@ public abstract class AbstractArtifact
             return false;
         }
 
-        Artifact that = (Artifact) obj;
+        @SuppressWarnings("unchecked")
+		Artifact<T> that = (Artifact<T>) obj;
 
         return Objects.equals( getArtifactId(), that.getArtifactId() )
                 && Objects.equals( getGroupId(), that.getGroupId() )
                 && Objects.equals( getVersion(), that.getVersion() )
                 && Objects.equals( getExtension(), that.getExtension() )
                 && Objects.equals( getClassifier(), that.getClassifier() )
-                && Objects.equals( getFile(), that.getFile() )
+                && Objects.equals( getStorage(), that.getStorage() )
                 && Objects.equals( getProperties(), that.getProperties() );
     }
 
@@ -217,7 +198,7 @@ public abstract class AbstractArtifact
         hash = hash * 31 + getExtension().hashCode();
         hash = hash * 31 + getClassifier().hashCode();
         hash = hash * 31 + getVersion().hashCode();
-        hash = hash * 31 + hash( getFile() );
+        hash = hash * 31 + hash( getStorage() );
         return hash;
     }
 

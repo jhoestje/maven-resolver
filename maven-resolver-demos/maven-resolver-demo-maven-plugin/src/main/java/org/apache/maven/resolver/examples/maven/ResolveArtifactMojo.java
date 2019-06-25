@@ -102,7 +102,7 @@ public class ResolveArtifactMojo
             throw new MojoExecutionException( e.getMessage(), e );
         }
 
-        LOGGER.info( "Resolved artifact {} to {} from {}", artifact, result.getArtifact().getFile(),
+        LOGGER.info( "Resolved artifact {} to {} from {}", artifact, result.getArtifact().getStorage(),
                 result.getRepository() );
     }
 

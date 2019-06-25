@@ -1,27 +1,8 @@
 package org.eclipse.aether.util.artifact;
 
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * 
- *  http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
-import java.io.File;
-import java.util.Map;
 import static java.util.Objects.requireNonNull;
+
+import java.util.Map;
 
 import org.eclipse.aether.artifact.AbstractArtifact;
 import org.eclipse.aether.artifact.Artifact;
@@ -30,18 +11,18 @@ import org.eclipse.aether.artifact.Artifact;
  * An artifact that delegates to another artifact instance. This class serves as a base for subclasses that want to
  * carry additional data fields.
  */
-public abstract class DelegatingArtifact
-    extends AbstractArtifact
+public abstract class DelegatingArtifact<T>
+    extends AbstractArtifact<T>
 {
 
-    private final Artifact delegate;
+    private final Artifact<T> delegate;
 
     /**
      * Creates a new artifact instance that delegates to the specified artifact.
      *
      * @param delegate The artifact to delegate to, must not be {@code null}.
      */
-    protected DelegatingArtifact( Artifact delegate )
+    protected DelegatingArtifact( Artifact<T> delegate )
     {
         this.delegate = requireNonNull( delegate, "delegate artifact cannot be null" );
     }
@@ -53,7 +34,7 @@ public abstract class DelegatingArtifact
      * @param delegate The artifact to delegate to, must not be {@code null}.
      * @return The new delegating artifact, never {@code null}.
      */
-    protected abstract DelegatingArtifact newInstance( Artifact delegate );
+    protected abstract DelegatingArtifact<T> newInstance( Artifact<T> delegate );
 
     public String getGroupId()
     {
@@ -70,9 +51,9 @@ public abstract class DelegatingArtifact
         return delegate.getVersion();
     }
 
-    public Artifact setVersion( String version )
+    public Artifact<T> setVersion( String version )
     {
-        Artifact artifact = delegate.setVersion( version );
+        Artifact<T> artifact = delegate.setVersion( version );
         if ( artifact != delegate )
         {
             return newInstance( artifact );
@@ -100,14 +81,14 @@ public abstract class DelegatingArtifact
         return delegate.getExtension();
     }
 
-    public File getFile()
+    public T getStorage()
     {
-        return delegate.getFile();
+        return delegate.getStorage();
     }
 
-    public Artifact setFile( File file )
+    public Artifact<T> setStorage( T file )
     {
-        Artifact artifact = delegate.setFile( file );
+        Artifact<T> artifact = delegate.setStorage( file );
         if ( artifact != delegate )
         {
             return newInstance( artifact );
@@ -125,9 +106,9 @@ public abstract class DelegatingArtifact
         return delegate.getProperties();
     }
 
-    public Artifact setProperties( Map<String, String> properties )
+    public Artifact<T> setProperties( Map<String, String> properties )
     {
-        Artifact artifact = delegate.setProperties( properties );
+        Artifact<T> artifact = delegate.setProperties( properties );
         if ( artifact != delegate )
         {
             return newInstance( artifact );
@@ -135,7 +116,8 @@ public abstract class DelegatingArtifact
         return this;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public boolean equals( Object obj )
     {
         if ( obj == this )
@@ -145,7 +127,7 @@ public abstract class DelegatingArtifact
 
         if ( obj instanceof DelegatingArtifact )
         {
-            return delegate.equals( ( (DelegatingArtifact) obj ).delegate );
+            return delegate.equals( ( (DelegatingArtifact<T>) obj ).delegate );
         }
 
         return delegate.equals( obj );

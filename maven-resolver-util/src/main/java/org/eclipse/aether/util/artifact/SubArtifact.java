@@ -1,29 +1,9 @@
 package org.eclipse.aether.util.artifact;
 
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * 
- *  http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
+import static java.util.Objects.requireNonNull;
 
-import java.io.File;
 import java.util.Map;
 import java.util.Objects;
-
-import static java.util.Objects.requireNonNull;
 
 import org.eclipse.aether.artifact.AbstractArtifact;
 import org.eclipse.aether.artifact.Artifact;
@@ -32,17 +12,17 @@ import org.eclipse.aether.artifact.Artifact;
  * An artifact whose identity is derived from another artifact. <em>Note:</em> Instances of this class are immutable and
  * the exposed mutators return new objects rather than changing the current instance.
  */
-public final class SubArtifact
-    extends AbstractArtifact
+public final class SubArtifact<T>
+    extends AbstractArtifact<T>
 {
 
-    private final Artifact mainArtifact;
+    private final Artifact<T> mainArtifact;
 
     private final String classifier;
 
     private final String extension;
 
-    private final File file;
+    private final T file;
 
     private final Map<String, String> properties;
 
@@ -56,9 +36,9 @@ public final class SubArtifact
      * @param classifier The classifier for this artifact, may be {@code null} if none.
      * @param extension The extension for this artifact, may be {@code null} if none.
      */
-    public SubArtifact( Artifact mainArtifact, String classifier, String extension )
+    public SubArtifact( Artifact<T> mainArtifact, String classifier, String extension )
     {
-        this( mainArtifact, classifier, extension, (File) null );
+        this( mainArtifact, classifier, extension, (T) null );
     }
 
     /**
@@ -72,7 +52,7 @@ public final class SubArtifact
      * @param extension The extension for this artifact, may be {@code null} if none.
      * @param file The file for this artifact, may be {@code null} if unresolved.
      */
-    public SubArtifact( Artifact mainArtifact, String classifier, String extension, File file )
+    public SubArtifact( Artifact<T> mainArtifact, String classifier, String extension, T file )
     {
         this( mainArtifact, classifier, extension, null, file );
     }
@@ -88,7 +68,7 @@ public final class SubArtifact
      * @param extension The extension for this artifact, may be {@code null} if none.
      * @param properties The properties of the artifact, may be {@code null}.
      */
-    public SubArtifact( Artifact mainArtifact, String classifier, String extension, Map<String, String> properties )
+    public SubArtifact( Artifact<T> mainArtifact, String classifier, String extension, Map<String, String> properties )
     {
         this( mainArtifact, classifier, extension, properties, null );
     }
@@ -105,8 +85,8 @@ public final class SubArtifact
      * @param properties The properties of the artifact, may be {@code null}.
      * @param file The file for this artifact, may be {@code null} if unresolved.
      */
-    public SubArtifact( Artifact mainArtifact, String classifier, String extension, Map<String, String> properties,
-                        File file )
+    public SubArtifact( Artifact<T> mainArtifact, String classifier, String extension, Map<String, String> properties,
+                        T file )
     {
         this.mainArtifact = requireNonNull( mainArtifact, "main artifact cannot be null" );
         this.classifier = classifier;
@@ -115,16 +95,16 @@ public final class SubArtifact
         this.properties = copyProperties( properties );
     }
 
-    private SubArtifact( Artifact mainArtifact, String classifier, String extension, File file,
-                         Map<String, String> properties )
-    {
-        // NOTE: This constructor assumes immutability of the provided properties, for internal use only
-        this.mainArtifact = mainArtifact;
-        this.classifier = classifier;
-        this.extension = extension;
-        this.file = file;
-        this.properties = properties;
-    }
+//    private SubArtifact( Artifact<T> mainArtifact, String classifier, String extension, T file,
+//                         Map<String, String> properties )
+//    {
+//        // NOTE: This constructor assumes immutability of the provided properties, for internal use only
+//        this.mainArtifact = mainArtifact;
+//        this.classifier = classifier;
+//        this.extension = extension;
+//        this.file = file;
+//        this.properties = properties;
+//    }
 
     public String getGroupId()
     {
@@ -161,18 +141,18 @@ public final class SubArtifact
         return expand( extension, mainArtifact.getExtension() );
     }
 
-    public File getFile()
+    public T getStorage()
     {
         return file;
     }
 
-    public Artifact setFile( File file )
+    public Artifact<T> setStorage( T file )
     {
         if ( Objects.equals( this.file, file ) )
         {
             return this;
         }
-        return new SubArtifact( mainArtifact, classifier, extension, file, properties );
+        return new SubArtifact<T>( mainArtifact, classifier, extension, properties, file );
     }
 
     public Map<String, String> getProperties()
@@ -180,13 +160,13 @@ public final class SubArtifact
         return properties;
     }
 
-    public Artifact setProperties( Map<String, String> properties )
+    public Artifact<T> setProperties( Map<String, String> properties )
     {
         if ( this.properties.equals( properties ) || ( properties == null && this.properties.isEmpty() ) )
         {
             return this;
         }
-        return new SubArtifact( mainArtifact, classifier, extension, properties, file );
+        return new SubArtifact<T>( mainArtifact, classifier, extension, properties, file );
     }
 
     private static String expand( String pattern, String replacement )
@@ -228,5 +208,10 @@ public final class SubArtifact
         }
         return result;
     }
+
+	@Override
+	protected Artifact<T> newInstance(String version, Map<String, String> properties, T file) {
+		return new SubArtifact<T>( mainArtifact, classifier, extension, properties, file );
+	}
 
 }

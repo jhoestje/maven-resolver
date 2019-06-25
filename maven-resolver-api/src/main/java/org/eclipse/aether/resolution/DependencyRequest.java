@@ -31,7 +31,7 @@ import org.eclipse.aether.graph.DependencyNode;
  * calculate the transitive dependencies or with an already resolved dependency graph.
  * 
  * @see RepositorySystem#resolveDependencies(org.eclipse.aether.RepositorySystemSession, DependencyRequest)
- * @see Artifact#getFile()
+ * @see Artifact#getStorage()
  */
 public final class DependencyRequest
 {

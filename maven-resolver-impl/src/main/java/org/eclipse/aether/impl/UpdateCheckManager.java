@@ -41,7 +41,7 @@ public interface UpdateCheckManager
      * @param session The repository system session during which the request is made, must not be {@code null}.
      * @param check The update check request, must not be {@code null}.
      */
-    void checkArtifact( RepositorySystemSession session, UpdateCheck<Artifact, ArtifactTransferException> check );
+    void checkArtifact( RepositorySystemSession session, UpdateCheck<Artifact<?>, ArtifactTransferException> check );
 
     /**
      * Updates the timestamp for the artifact contained in the update check.
@@ -49,7 +49,7 @@ public interface UpdateCheckManager
      * @param session The repository system session during which the request is made, must not be {@code null}.
      * @param check The update check request, must not be {@code null}.
      */
-    void touchArtifact( RepositorySystemSession session, UpdateCheck<Artifact, ArtifactTransferException> check );
+    void touchArtifact( RepositorySystemSession session, UpdateCheck<Artifact<?>, ArtifactTransferException> check );
 
     /**
      * Checks whether metadata has to be updated from a remote repository.

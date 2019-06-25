@@ -44,10 +44,10 @@ public class SubArtifactTest
     @Test
     public void testMainArtifactFileNotRetained()
     {
-        Artifact a = newMainArtifact( "gid:aid:ver" ).setFile( new File( "" ) );
-        assertNotNull( a.getFile() );
+        Artifact a = newMainArtifact( "gid:aid:ver" ).setStorage( new File( "" ) );
+        assertNotNull( a.getStorage() );
         a = new SubArtifact( a, "", "pom" );
-        assertNull( a.getFile() );
+        assertNull( a.getStorage() );
     }
 
     @Test
@@ -132,7 +132,7 @@ public class SubArtifactTest
     public void testImmutability()
     {
         Artifact a = new SubArtifact( newMainArtifact( "gid:aid:ver" ), "", "pom" );
-        assertNotSame( a, a.setFile( new File( "file" ) ) );
+        assertNotSame( a, a.setStorage( new File( "file" ) ) );
         assertNotSame( a, a.setVersion( "otherVersion" ) );
         assertNotSame( a, a.setProperties( Collections.singletonMap( "key", "value" ) ) );
     }
