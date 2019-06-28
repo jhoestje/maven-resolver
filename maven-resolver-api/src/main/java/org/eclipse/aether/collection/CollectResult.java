@@ -33,7 +33,7 @@ import org.eclipse.aether.graph.DependencyNode;
  * 
  * @see RepositorySystem#collectDependencies(org.eclipse.aether.RepositorySystemSession, CollectRequest)
  */
-public final class CollectResult
+public final class CollectResult<T>
 {
 
     private final CollectRequest request;
@@ -42,7 +42,7 @@ public final class CollectResult
 
     private List<DependencyCycle> cycles;
 
-    private DependencyNode root;
+    private DependencyNode<T> root;
 
     /**
      * Creates a new result for the specified request.
@@ -82,7 +82,7 @@ public final class CollectResult
      * @param exception The exception to record, may be {@code null}.
      * @return This result for chaining, never {@code null}.
      */
-    public CollectResult addException( Exception exception )
+    public CollectResult<T> addException( Exception exception )
     {
         if ( exception != null )
         {
@@ -111,7 +111,7 @@ public final class CollectResult
      * @param cycle The dependency cycle to record, may be {@code null}.
      * @return This result for chaining, never {@code null}.
      */
-    public CollectResult addCycle( DependencyCycle cycle )
+    public CollectResult<T> addCycle( DependencyCycle cycle )
     {
         if ( cycle != null )
         {
@@ -129,7 +129,7 @@ public final class CollectResult
      * 
      * @return The root node of the dependency graph or {@code null} if none.
      */
-    public DependencyNode getRoot()
+    public DependencyNode<T> getRoot()
     {
         return root;
     }
@@ -140,7 +140,7 @@ public final class CollectResult
      * @param root The root node of the dependency graph, may be {@code null}.
      * @return This result for chaining, never {@code null}.
      */
-    public CollectResult setRoot( DependencyNode root )
+    public CollectResult<T> setRoot( DependencyNode<T> root )
     {
         this.root = root;
         return this;

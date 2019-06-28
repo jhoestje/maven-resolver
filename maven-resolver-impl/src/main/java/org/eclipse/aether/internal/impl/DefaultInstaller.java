@@ -228,7 +228,7 @@ public class DefaultInstaller
         return generators;
     }
 
-    private void install( RepositorySystemSession session, RequestTrace trace, Artifact artifact )
+    private void install( RepositorySystemSession session, RequestTrace trace, Artifact<File> artifact )
         throws InstallationException
     {
         LocalRepositoryManager lrm = session.getLocalRepositoryManager();

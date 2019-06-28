@@ -1,5 +1,7 @@
 package org.eclipse.aether.util.graph.transformer;
 
+import java.io.File;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -95,7 +97,7 @@ public final class ConflictIdSorter
         return node;
     }
 
-    private void buildConflitIdDAG( Map<Object, ConflictId> ids, DependencyNode node, ConflictId id, int depth,
+    private void buildConflitIdDAG( Map<Object, ConflictId> ids, DependencyNode<File> node, ConflictId id, int depth,
                                     Map<DependencyNode, Object> visited, Map<?, ?> conflictIds )
     {
         if ( visited.put( node, Boolean.TRUE ) != null )
@@ -105,7 +107,7 @@ public final class ConflictIdSorter
 
         depth++;
 
-        for ( DependencyNode child : node.getChildren() )
+        for ( DependencyNode<File> child : node.getChildren() )
         {
             Object key = conflictIds.get( child );
             ConflictId childId = ids.get( key );

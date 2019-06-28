@@ -358,7 +358,7 @@ public class DefaultArtifactResolverTest
 
         assertTrue( result.getExceptions().isEmpty() );
 
-        Artifact resolved = result.getArtifact();
+        Artifact<File> resolved = result.getArtifact();
         assertNotNull( resolved.getStorage() );
 
         assertEquals( resolved.toString(), TestFileUtils.readString( resolved.getStorage() ) );

@@ -52,7 +52,7 @@ class StaticUpdateCheckManager
     {
     }
 
-    public void touchArtifact( RepositorySystemSession session, UpdateCheck<Artifact, ArtifactTransferException> check )
+    public void touchArtifact( RepositorySystemSession session, UpdateCheck<Artifact<?>, ArtifactTransferException> check )
     {
     }
 
@@ -70,7 +70,7 @@ class StaticUpdateCheckManager
         }
     }
 
-    public void checkArtifact( RepositorySystemSession session, UpdateCheck<Artifact, ArtifactTransferException> check )
+    public void checkArtifact( RepositorySystemSession session, UpdateCheck<Artifact<?>, ArtifactTransferException> check )
     {
         check.setRequired( checkRequired );
 

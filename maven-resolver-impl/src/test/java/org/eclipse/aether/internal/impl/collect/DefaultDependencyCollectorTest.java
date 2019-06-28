@@ -26,6 +26,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -163,7 +164,7 @@ public class DefaultDependencyCollectorTest
     {
         try
         {
-            DependencyNode node = root;
+            DependencyNode<File> node = root;
             for ( int coord : coords )
             {
                 node = node.getChildren().get( coord );
@@ -187,7 +188,7 @@ public class DefaultDependencyCollectorTest
 
         assertEquals( 0, result.getExceptions().size() );
 
-        DependencyNode root = result.getRoot();
+        DependencyNode<File> root = result.getRoot();
         Dependency newDependency = root.getDependency();
 
         assertEquals( dependency, newDependency );
@@ -289,12 +290,12 @@ public class DefaultDependencyCollectorTest
     {
         CollectRequest request = new CollectRequest( newDep( "test:a:2" ), Arrays.asList( repository ) );
         collector.setArtifactDescriptorReader( newReader( "versionless-cycle/" ) );
-        CollectResult result = collector.collectDependencies( session, request );
-        DependencyNode root = result.getRoot();
-        DependencyNode a1 = path( root, 0, 0 );
+        CollectResult<File> result = collector.collectDependencies( session, request );
+        DependencyNode<File> root = result.getRoot();
+        DependencyNode<File> a1 = path( root, 0, 0 );
         assertEquals( "a", a1.getArtifact().getArtifactId() );
         assertEquals( "1", a1.getArtifact().getVersion() );
-        for ( DependencyNode child : a1.getChildren() )
+        for ( DependencyNode<File> child : a1.getChildren() )
         {
             assertFalse( "1".equals( child.getArtifact().getVersion() ) );
         }
@@ -313,12 +314,12 @@ public class DefaultDependencyCollectorTest
         Dependency dep = newDep( "gid:aid:ver", "compile" );
         CollectRequest request =
             new CollectRequest().addDependency( dep ).addRepository( repository ).setRootArtifact( dep.getArtifact() );
-        CollectResult result = collector.collectDependencies( session, request );
-        DependencyNode root = result.getRoot();
-        DependencyNode a1 = root.getChildren().get( 0 );
+        CollectResult<File> result = collector.collectDependencies( session, request );
+        DependencyNode<File> root = result.getRoot();
+        DependencyNode<File> a1 = root.getChildren().get( 0 );
         assertEquals( "aid", a1.getArtifact().getArtifactId() );
         assertEquals( "ver", a1.getArtifact().getVersion() );
-        DependencyNode a2 = a1.getChildren().get( 0 );
+        DependencyNode<File> a2 = a1.getChildren().get( 0 );
         assertEquals( "aid2", a2.getArtifact().getArtifactId() );
         assertEquals( "ver", a2.getArtifact().getVersion() );
 
@@ -475,8 +476,8 @@ public class DefaultDependencyCollectorTest
         session.setConfigProperty( DependencyManagerUtils.CONFIG_PROP_VERBOSE, Boolean.TRUE );
 
         CollectRequest request = new CollectRequest().setRoot( newDep( "gid:aid:ver" ) );
-        CollectResult result = collector.collectDependencies( session, request );
-        DependencyNode node = result.getRoot().getChildren().get( 0 );
+        CollectResult<File> result = collector.collectDependencies( session, request );
+        DependencyNode<File> node = result.getRoot().getChildren().get( 0 );
         assertEquals( DependencyNode.MANAGED_VERSION | DependencyNode.MANAGED_SCOPE | DependencyNode.MANAGED_OPTIONAL
             | DependencyNode.MANAGED_PROPERTIES | DependencyNode.MANAGED_EXCLUSIONS, node.getManagedBits() );
         assertEquals( "ver", DependencyManagerUtils.getPremanagedVersion( node ) );
@@ -589,7 +590,7 @@ public class DefaultDependencyCollectorTest
 
         assertEquals( 0, result.getExceptions().size() );
 
-        DependencyNode root = result.getRoot();
+        DependencyNode<File> root = result.getRoot();
         Dependency newDependency = root.getDependency();
 
         assertEquals( dependency, newDependency );
@@ -598,7 +599,7 @@ public class DefaultDependencyCollectorTest
         assertEquals( 1, root.getChildren().size() );
 
         Dependency expect = newDep( "gid3:aid2:ext:1", "compile" );
-        DependencyNode childLevel1 = root.getChildren().get( 0 );
+        DependencyNode<File> childLevel1 = root.getChildren().get( 0 );
         assertEquals( expect, childLevel1.getDependency() );
 
         // With proper dependency management, the test scope of aid3 would

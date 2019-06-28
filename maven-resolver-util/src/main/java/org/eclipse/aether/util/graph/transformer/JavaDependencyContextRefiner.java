@@ -37,7 +37,7 @@ public final class JavaDependencyContextRefiner
     implements DependencyGraphTransformer
 {
 
-    public DependencyNode transformGraph( DependencyNode node, DependencyGraphTransformationContext context )
+    public DependencyNode<?> transformGraph( DependencyNode<?> node, DependencyGraphTransformationContext context )
         throws RepositoryException
     {
         String ctx = node.getRequestContext();
@@ -52,7 +52,7 @@ public final class JavaDependencyContextRefiner
             }
         }
 
-        for ( DependencyNode child : node.getChildren() )
+        for ( DependencyNode<?> child : node.getChildren() )
         {
             transformGraph( child, context );
         }

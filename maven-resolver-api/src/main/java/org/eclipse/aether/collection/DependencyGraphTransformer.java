@@ -45,7 +45,7 @@ public interface DependencyGraphTransformer
      * @return The result graph of the transformation, never {@code null}.
      * @throws RepositoryException If the transformation failed.
      */
-    DependencyNode transformGraph( DependencyNode node, DependencyGraphTransformationContext context )
+    DependencyNode<?> transformGraph( DependencyNode<?> node, DependencyGraphTransformationContext context )
         throws RepositoryException;
 
 }

@@ -21,6 +21,7 @@ package org.eclipse.aether.util.graph.transformer;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.Locale;
 
 import org.eclipse.aether.collection.DependencyGraphTransformer;
@@ -80,7 +81,7 @@ public class JavaScopeSelectorTest
         }
     }
 
-    private DependencyNode path( DependencyNode node, int... coords )
+    private DependencyNode<File> path( DependencyNode<File> node, int... coords )
     {
         for ( int coord : coords )
         {

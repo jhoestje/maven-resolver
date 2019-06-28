@@ -103,7 +103,8 @@ public class DependencyCollectionException
         Throwable cause = null;
         if ( result != null && !result.getExceptions().isEmpty() )
         {
-            cause = result.getExceptions().get( 0 );
+        	// TODO:  JPH  why this??
+            cause = (Throwable) result.getExceptions().get( 0 );
         }
         return cause;
     }

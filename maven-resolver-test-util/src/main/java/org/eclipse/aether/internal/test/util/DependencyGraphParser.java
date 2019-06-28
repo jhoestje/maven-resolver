@@ -20,6 +20,7 @@ package org.eclipse.aether.internal.test.util;
  */
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
@@ -411,7 +412,7 @@ public class DependencyGraphParser
 
     }
 
-    private void addNode( DependencyNode root, int level, List<NodeEntry> entries )
+    private void addNode( DependencyNode<File> root, int level, List<NodeEntry> entries )
     {
 
         NodeEntry entry = new NodeEntry();
@@ -447,7 +448,7 @@ public class DependencyGraphParser
 
         entries.add( entry );
 
-        for ( DependencyNode node : root.getChildren() )
+        for ( DependencyNode<File> node : root.getChildren() )
         {
             addNode( node, level, entries );
         }

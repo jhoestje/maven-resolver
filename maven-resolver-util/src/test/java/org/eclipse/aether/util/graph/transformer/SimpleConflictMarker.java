@@ -1,5 +1,7 @@
 package org.eclipse.aether.util.graph.transformer;
 
+import java.io.File;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -53,7 +55,7 @@ class SimpleConflictMarker
         return node;
     }
 
-    private void mark( DependencyNode node, Map<DependencyNode, Object> conflictIds )
+    private void mark( DependencyNode<File> node, Map<DependencyNode, Object> conflictIds )
     {
         Dependency dependency = node.getDependency();
         if ( dependency != null )
@@ -70,7 +72,7 @@ class SimpleConflictMarker
             }
         }
 
-        for ( DependencyNode child : node.getChildren() )
+        for ( DependencyNode<File> child : node.getChildren() )
         {
             mark( child, conflictIds );
         }

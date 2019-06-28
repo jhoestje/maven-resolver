@@ -21,6 +21,7 @@ package org.eclipse.aether.util.graph.transformer;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -80,7 +81,7 @@ public abstract class AbstractDependencyGraphTransformerTest
         return trail;
     }
 
-    private boolean find( LinkedList<DependencyNode> trail, DependencyNode node, String id )
+    private boolean find( LinkedList<DependencyNode> trail, DependencyNode<File> node, String id )
     {
         trail.addFirst( node );
 
@@ -89,7 +90,7 @@ public abstract class AbstractDependencyGraphTransformerTest
             return true;
         }
 
-        for ( DependencyNode child : node.getChildren() )
+        for ( DependencyNode<File> child : node.getChildren() )
         {
             if ( find( trail, child, id ) )
             {

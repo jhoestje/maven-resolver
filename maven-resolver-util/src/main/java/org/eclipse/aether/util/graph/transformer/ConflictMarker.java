@@ -1,5 +1,7 @@
 package org.eclipse.aether.util.graph.transformer;
 
+import java.io.File;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -79,7 +81,7 @@ public final class ConflictMarker
         return node;
     }
 
-    private void analyze( DependencyNode node, Map<DependencyNode, Object> nodes, Map<Object, ConflictGroup> groups,
+    private void analyze( DependencyNode<File> node, Map<DependencyNode, Object> nodes, Map<Object, ConflictGroup> groups,
                           int[] counter )
     {
         if ( nodes.put( node, Boolean.TRUE ) != null )
@@ -149,7 +151,7 @@ public final class ConflictMarker
             }
         }
 
-        for ( DependencyNode child : node.getChildren() )
+        for ( DependencyNode<File> child : node.getChildren() )
         {
             analyze( child, nodes, groups, counter );
         }
@@ -181,7 +183,7 @@ public final class ConflictMarker
         return keys;
     }
 
-    private Set<Object> getKeys( DependencyNode node )
+    private Set<Object> getKeys( DependencyNode<File> node )
     {
         Set<Object> keys;
 
@@ -204,13 +206,13 @@ public final class ConflictMarker
                 keys = new HashSet<>();
                 keys.add( key );
 
-                for ( Artifact relocation : node.getRelocations() )
+                for ( Artifact<File> relocation : node.getRelocations() )
                 {
                     key = toKey( relocation );
                     keys.add( key );
                 }
 
-                for ( Artifact alias : node.getAliases() )
+                for ( Artifact<File> alias : node.getAliases() )
                 {
                     key = toKey( alias );
                     keys.add( key );

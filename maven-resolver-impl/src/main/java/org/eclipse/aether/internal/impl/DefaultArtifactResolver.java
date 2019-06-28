@@ -585,7 +585,7 @@ public class DefaultArtifactResolver
                 continue;
             }
 
-            Artifact<?> artifact = download.getArtifact();
+            Artifact<File> artifact = download.getArtifact();
             if ( download.getException() == null )
             {
                 item.resolved.set( true );
@@ -700,7 +700,7 @@ public class DefaultArtifactResolver
 
     }
 
-    static class ResolutionItem
+    static class ResolutionItem<T>
     {
 
         final RequestTrace trace;
@@ -713,15 +713,15 @@ public class DefaultArtifactResolver
 
         final RemoteRepository repository;
 
-        final Artifact artifact;
+        final Artifact<T> artifact;
 
         final AtomicBoolean resolved;
 
         ArtifactDownload download;
 
-        UpdateCheck<Artifact, ArtifactTransferException> updateCheck;
+        UpdateCheck<Artifact<T>, ArtifactTransferException> updateCheck;
 
-        ResolutionItem( RequestTrace trace, Artifact artifact, AtomicBoolean resolved, ArtifactResult result,
+        ResolutionItem( RequestTrace trace, Artifact<T> artifact, AtomicBoolean resolved, ArtifactResult result,
                         LocalArtifactResult local, RemoteRepository repository )
         {
             this.trace = trace;

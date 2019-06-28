@@ -59,7 +59,7 @@ import org.junit.Test;
 public class DefaultInstallerTest
 {
 
-    private Artifact artifact;
+    private Artifact<File> artifact;
 
     private Metadata metadata;
 
