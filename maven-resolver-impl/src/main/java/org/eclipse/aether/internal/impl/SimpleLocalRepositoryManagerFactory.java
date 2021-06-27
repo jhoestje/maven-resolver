@@ -8,9 +8,9 @@ package org.eclipse.aether.internal.impl;
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -20,6 +20,9 @@ package org.eclipse.aether.internal.impl;
  */
 
 import javax.inject.Named;
+import javax.inject.Singleton;
+
+import java.util.Objects;
 
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.LocalRepository;
@@ -30,6 +33,7 @@ import org.eclipse.aether.spi.localrepo.LocalRepositoryManagerFactory;
 /**
  * Creates local repository managers for repository type {@code "simple"}.
  */
+@Singleton
 @Named( "simple" )
 public class SimpleLocalRepositoryManagerFactory
     implements LocalRepositoryManagerFactory
@@ -44,6 +48,9 @@ public class SimpleLocalRepositoryManagerFactory
     public LocalRepositoryManager newInstance( RepositorySystemSession session, LocalRepository repository )
         throws NoLocalRepositoryManagerException
     {
+        Objects.requireNonNull( "session", "session cannot be null" );
+        Objects.requireNonNull( "repository", "repository cannot be null" );
+
         if ( "".equals( repository.getContentType() ) || "simple".equals( repository.getContentType() ) )
         {
             return new SimpleLocalRepositoryManager( repository.getBasedir() );
@@ -61,7 +68,7 @@ public class SimpleLocalRepositoryManagerFactory
 
     /**
      * Sets the priority of this component.
-     * 
+     *
      * @param priority The priority.
      * @return This component for chaining, never {@code null}.
      */

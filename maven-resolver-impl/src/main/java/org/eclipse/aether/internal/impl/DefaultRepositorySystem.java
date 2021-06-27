@@ -26,6 +26,7 @@ import static java.util.Objects.requireNonNull;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
@@ -48,7 +49,7 @@ import org.eclipse.aether.impl.Installer;
 import org.eclipse.aether.impl.LocalRepositoryProvider;
 import org.eclipse.aether.impl.MetadataResolver;
 import org.eclipse.aether.impl.RemoteRepositoryManager;
-import org.eclipse.aether.impl.SyncContextFactory;
+import org.eclipse.aether.spi.synccontext.SyncContextFactory;
 import org.eclipse.aether.impl.VersionRangeResolver;
 import org.eclipse.aether.impl.VersionResolver;
 import org.eclipse.aether.installation.InstallRequest;
@@ -84,6 +85,7 @@ import org.eclipse.aether.util.graph.visitor.TreeDependencyVisitor;
 
 /**
  */
+@Singleton
 @Named
 public class DefaultRepositorySystem
     implements RepositorySystem, Service
@@ -237,6 +239,8 @@ public class DefaultRepositorySystem
         throws VersionResolutionException
     {
         validateSession( session );
+        requireNonNull( request, "request cannot be null" );
+
         return versionResolver.resolveVersion( session, request );
     }
 
@@ -244,6 +248,8 @@ public class DefaultRepositorySystem
         throws VersionRangeResolutionException
     {
         validateSession( session );
+        requireNonNull( request, "request cannot be null" );
+
         return versionRangeResolver.resolveVersionRange( session, request );
     }
 
@@ -252,6 +258,8 @@ public class DefaultRepositorySystem
         throws ArtifactDescriptorException
     {
         validateSession( session );
+        requireNonNull( request, "request cannot be null" );
+
         return artifactDescriptorReader.readArtifactDescriptor( session, request );
     }
 
@@ -259,6 +267,8 @@ public class DefaultRepositorySystem
         throws ArtifactResolutionException
     {
         validateSession( session );
+        requireNonNull( session, "session cannot be null" );
+
         return artifactResolver.resolveArtifact( session, request );
     }
 
@@ -267,6 +277,8 @@ public class DefaultRepositorySystem
         throws ArtifactResolutionException
     {
         validateSession( session );
+        requireNonNull( requests, "requests cannot be null" );
+
         return artifactResolver.resolveArtifacts( session, requests );
     }
 
@@ -274,6 +286,8 @@ public class DefaultRepositorySystem
                                                  Collection<? extends MetadataRequest> requests )
     {
         validateSession( session );
+        requireNonNull( requests, "requests cannot be null" );
+
         return metadataResolver.resolveMetadata( session, requests );
     }
 
@@ -281,6 +295,8 @@ public class DefaultRepositorySystem
         throws DependencyCollectionException
     {
         validateSession( session );
+        requireNonNull( request, "request cannot be null" );
+
         return dependencyCollector.collectDependencies( session, request );
     }
 
@@ -288,6 +304,7 @@ public class DefaultRepositorySystem
         throws DependencyResolutionException
     {
         validateSession( session );
+        requireNonNull( request, "request cannot be null" );
 
         RequestTrace trace = RequestTrace.newChild( request.getTrace(), request );
 
@@ -376,6 +393,8 @@ public class DefaultRepositorySystem
         throws InstallationException
     {
         validateSession( session );
+        requireNonNull( request, "request cannot be null" );
+
         return installer.install( session, request );
     }
 
@@ -383,12 +402,17 @@ public class DefaultRepositorySystem
         throws DeploymentException
     {
         validateSession( session );
+        requireNonNull( request, "request cannot be null" );
+
         return deployer.deploy( session, request );
     }
 
     public LocalRepositoryManager newLocalRepositoryManager( RepositorySystemSession session,
                                                              LocalRepository localRepository )
     {
+        requireNonNull( session, "session cannot be null" );
+        requireNonNull( localRepository, "localRepository cannot be null" );
+
         try
         {
             return localRepositoryProvider.newLocalRepositoryManager( session, localRepository );
@@ -409,6 +433,8 @@ public class DefaultRepositorySystem
                                                              List<RemoteRepository> repositories )
     {
         validateSession( session );
+        validateRepositories( repositories );
+
         repositories =
             remoteRepositoryManager.aggregateRepositories( session, new ArrayList<RemoteRepository>(), repositories,
                                                            true );
@@ -418,6 +444,8 @@ public class DefaultRepositorySystem
     public RemoteRepository newDeploymentRepository( RepositorySystemSession session, RemoteRepository repository )
     {
         validateSession( session );
+        requireNonNull( repository, "repository cannot be null" );
+
         RemoteRepository.Builder builder = new RemoteRepository.Builder( repository );
         Authentication auth = session.getAuthenticationSelector().getAuthentication( repository );
         builder.setAuthentication( auth );
@@ -438,6 +466,15 @@ public class DefaultRepositorySystem
         invalidSession( session.getAuthenticationSelector(), "authentication selector" );
         invalidSession( session.getArtifactTypeRegistry(), "artifact type registry" );
         invalidSession( session.getData(), "data" );
+    }
+
+    private void validateRepositories( List<RemoteRepository> repositories )
+    {
+        requireNonNull( repositories, "repositories cannot be null" );
+        for ( RemoteRepository repository: repositories )
+        {
+            requireNonNull( repository, "repository cannot be null" );
+        }
     }
 
     private void invalidSession( Object obj, String name )

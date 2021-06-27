@@ -27,10 +27,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryEvent.EventType;
@@ -42,7 +44,7 @@ import org.eclipse.aether.impl.Installer;
 import org.eclipse.aether.impl.MetadataGenerator;
 import org.eclipse.aether.impl.MetadataGeneratorFactory;
 import org.eclipse.aether.impl.RepositoryEventDispatcher;
-import org.eclipse.aether.impl.SyncContextFactory;
+import org.eclipse.aether.spi.synccontext.SyncContextFactory;
 import org.eclipse.aether.installation.InstallRequest;
 import org.eclipse.aether.installation.InstallResult;
 import org.eclipse.aether.installation.InstallationException;
@@ -60,6 +62,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  */
+@Singleton
 @Named
 public class DefaultInstaller
     implements Installer, Service
@@ -139,7 +142,8 @@ public class DefaultInstaller
     public InstallResult install( RepositorySystemSession session, InstallRequest request )
         throws InstallationException
     {
-
+        requireNonNull( session, "session cannot be null" );
+        requireNonNull( request, "request cannot be null" );
         try ( SyncContext syncContext = syncContextFactory.newInstance( session, false ) )
         {
             return install( syncContext, session, request );
@@ -170,16 +174,16 @@ public class DefaultInstaller
             result.addMetadata( metadata );
         }
 
-        for ( int i = 0; i < artifacts.size(); i++ )
+        for ( ListIterator<Artifact> iterator = artifacts.listIterator(); iterator.hasNext(); )
         {
-            Artifact artifact = artifacts.get( i );
+            Artifact artifact = iterator.next();
 
             for ( MetadataGenerator generator : generators )
             {
                 artifact = generator.transformArtifact( artifact );
             }
 
-            artifacts.set( i, artifact );
+            iterator.set( artifact );
 
             install( session, trace, artifact );
             result.addArtifact( artifact );

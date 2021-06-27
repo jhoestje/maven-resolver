@@ -19,6 +19,7 @@ package org.eclipse.aether.util.graph.visitor;
  * under the License.
  */
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.*;
 
 import java.util.List;
@@ -103,6 +104,8 @@ public class PathRecordingDependencyVisitorTest
         {
             public boolean accept( DependencyNode node, List<DependencyNode> parents )
             {
+                requireNonNull( node, "node cannot be null" );
+                requireNonNull( parents, "parents cannot be null" );
                 for ( DependencyNode parent : parents )
                 {
                     buffer.append( parent.getDependency().getArtifact().getArtifactId() );
@@ -133,6 +136,20 @@ public class PathRecordingDependencyVisitorTest
         assertPath( paths.get( 1 ), "a", "x" );
         assertPath( paths.get( 2 ), "a", "x", "b", "x" );
         assertPath( paths.get( 3 ), "a", "x", "x" );
+    }
+
+    @Test
+    public void testGetPaths_HandlesCycles_threePaths()
+        throws Exception
+    {
+        DependencyNode root = parse( "cycle-3paths.txt" );
+
+        PathRecordingDependencyVisitor visitor = new PathRecordingDependencyVisitor( new ArtifactMatcher() );
+        root.accept( visitor );
+
+        List<List<DependencyNode>> paths = visitor.getPaths();
+        assertEquals( paths.toString(), 1, paths.size() );
+        assertPath( paths.get( 0 ), "a", "b");
     }
 
     private static class ArtifactMatcher

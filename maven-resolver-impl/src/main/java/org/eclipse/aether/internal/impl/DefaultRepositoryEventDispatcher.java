@@ -8,9 +8,9 @@ package org.eclipse.aether.internal.impl;
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -26,6 +26,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryListener;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  */
+@Singleton
 @Named
 public class DefaultRepositoryEventDispatcher
     implements RepositoryEventDispatcher, Service
@@ -83,6 +85,7 @@ public class DefaultRepositoryEventDispatcher
 
     public void dispatch( RepositoryEvent event )
     {
+        requireNonNull( event, "event cannot be null" );
         if ( !listeners.isEmpty() )
         {
             for ( RepositoryListener listener : listeners )
@@ -174,17 +177,7 @@ public class DefaultRepositoryEventDispatcher
 
     private void logError( Throwable e, Object listener )
     {
-        String msg =
-            "Failed to dispatch repository event to " + listener.getClass().getCanonicalName() + ": " + e.getMessage();
-
-        if ( LOGGER.isDebugEnabled() )
-        {
-            LOGGER.warn( msg, e );
-        }
-        else
-        {
-            LOGGER.warn( msg );
-        }
+        LOGGER.warn( "Failed to dispatch repository event to {}", listener.getClass().getCanonicalName(), e );
     }
 
 }

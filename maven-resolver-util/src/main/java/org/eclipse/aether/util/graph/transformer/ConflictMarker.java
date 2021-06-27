@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
+import static java.util.Objects.requireNonNull;
 
 import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.artifact.Artifact;
@@ -55,6 +56,8 @@ public final class ConflictMarker
     public DependencyNode transformGraph( DependencyNode node, DependencyGraphTransformationContext context )
         throws RepositoryException
     {
+        requireNonNull( node, "node cannot be null" );
+        requireNonNull( context, "context cannot be null" );
         @SuppressWarnings( "unchecked" )
         Map<String, Object> stats = (Map<String, Object>) context.get( TransformationContextKeys.STATS );
         long time1 = System.nanoTime();

@@ -22,12 +22,15 @@ package org.eclipse.aether.util.graph.selector;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.aether.collection.DependencyCollectionContext;
 import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.graph.Dependency;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A dependency selector that combines zero or more other selectors using a logical {@code AND}. The resulting selector
@@ -110,6 +113,7 @@ public final class AndDependencySelector
 
     public boolean selectDependency( Dependency dependency )
     {
+        requireNonNull( dependency, "dependency cannot be null" );
         for ( DependencySelector selector : selectors )
         {
             if ( !selector.selectDependency( dependency ) )
@@ -122,6 +126,7 @@ public final class AndDependencySelector
 
     public DependencySelector deriveChildSelector( DependencyCollectionContext context )
     {
+        requireNonNull( context, "context cannot be null" );
         int seen = 0;
         Set<DependencySelector> childSelectors = null;
 
@@ -201,6 +206,23 @@ public final class AndDependencySelector
             hashCode = hash;
         }
         return hashCode;
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder().append( this.getClass().getSimpleName() ).append( '(' );
+        Iterator<? extends DependencySelector> iterator = this.selectors.iterator();
+        while ( iterator.hasNext() )
+        {
+            final DependencySelector selector = iterator.next();
+            builder.append( selector.toString() );
+            if ( iterator.hasNext() ) // not last
+            {
+                builder.append( " && " );
+            }
+        }
+        return builder.append( ')' ).toString();
     }
 
 }

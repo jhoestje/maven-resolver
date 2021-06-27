@@ -23,6 +23,8 @@ import org.eclipse.aether.collection.DependencyCollectionContext;
 import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.graph.Dependency;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * A dependency selector that excludes optional dependencies which occur beyond level one of the dependency graph.
  * 
@@ -49,11 +51,13 @@ public final class OptionalDependencySelector
 
     public boolean selectDependency( Dependency dependency )
     {
+        requireNonNull( dependency, "dependency cannot be null" );
         return depth < 2 || !dependency.isOptional();
     }
 
     public DependencySelector deriveChildSelector( DependencyCollectionContext context )
     {
+        requireNonNull( context, "context cannot be null" );
         if ( depth >= 2 )
         {
             return this;
@@ -84,6 +88,12 @@ public final class OptionalDependencySelector
         int hash = getClass().hashCode();
         hash = hash * 31 + depth;
         return hash;
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format( "%s(depth: %d)", this.getClass().getSimpleName(), this.depth );
     }
 
 }

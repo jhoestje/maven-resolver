@@ -23,6 +23,7 @@ import java.io.File;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
+import static java.util.Objects.requireNonNull;
 
 import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.artifact.Artifact;
@@ -41,6 +42,8 @@ class SimpleConflictMarker
     public DependencyNode transformGraph( DependencyNode node, DependencyGraphTransformationContext context )
         throws RepositoryException
     {
+        requireNonNull( node, "node cannot be null" );
+        requireNonNull( context, "context cannot be null" );
         @SuppressWarnings( "unchecked" )
         Map<DependencyNode, Object> conflictIds =
             (Map<DependencyNode, Object>) context.get( TransformationContextKeys.CONFLICT_IDS );

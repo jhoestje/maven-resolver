@@ -8,9 +8,9 @@ package org.eclipse.aether.internal.impl;
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -22,35 +22,38 @@ package org.eclipse.aether.internal.impl;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 /**
- * A simple digester for strings.
+ * A simple digester for strings. It will traverse through a list of digest algorithms and pick the
+ * strongest one available.
  */
 class SimpleDigest
 {
 
-    private MessageDigest digest;
+    private static final String[] HASH_ALGOS = new String[] { "SHA-1", "MD5" };
 
-    private long hash;
+    private final MessageDigest digest;
 
     SimpleDigest()
     {
-        try
-        {
-            digest = MessageDigest.getInstance( "SHA-1" );
-        }
-        catch ( NoSuchAlgorithmException e )
+        MessageDigest md = null;
+        for ( String hashAlgo : HASH_ALGOS )
         {
             try
             {
-                digest = MessageDigest.getInstance( "MD5" );
+                md = MessageDigest.getInstance( hashAlgo );
+                break;
             }
             catch ( NoSuchAlgorithmException ne )
             {
-                digest = null;
-                hash = 13;
             }
         }
+        if ( md == null )
+        {
+            throw new IllegalStateException( "Not supported digests: " + Arrays.toString( HASH_ALGOS ) );
+        }
+        this.digest = md;
     }
 
     public void update( String data )
@@ -59,42 +62,27 @@ class SimpleDigest
         {
             return;
         }
-        if ( digest != null )
-        {
-            digest.update( data.getBytes( StandardCharsets.UTF_8 ) );
-        }
-        else
-        {
-            hash = hash * 31 + data.hashCode();
-        }
+        digest.update( data.getBytes( StandardCharsets.UTF_8 ) );
     }
 
     @SuppressWarnings( "checkstyle:magicnumber" )
     public String digest()
     {
-        if ( digest != null )
+        StringBuilder buffer = new StringBuilder( 64 );
+
+        byte[] bytes = digest.digest();
+        for ( byte aByte : bytes )
         {
-            StringBuilder buffer = new StringBuilder( 64 );
+            int b = aByte & 0xFF;
 
-            byte[] bytes = digest.digest();
-            for ( byte aByte : bytes )
+            if ( b < 0x10 )
             {
-                int b = aByte & 0xFF;
-
-                if ( b < 0x10 )
-                {
-                    buffer.append( '0' );
-                }
-
-                buffer.append( Integer.toHexString( b ) );
+                buffer.append( '0' );
             }
 
-            return buffer.toString();
+            buffer.append( Integer.toHexString( b ) );
         }
-        else
-        {
-            return Long.toHexString( hash );
-        }
-    }
 
+        return buffer.toString();
+    }
 }

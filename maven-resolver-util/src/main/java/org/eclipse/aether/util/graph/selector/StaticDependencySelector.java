@@ -23,6 +23,8 @@ import org.eclipse.aether.collection.DependencyCollectionContext;
 import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.graph.Dependency;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * A dependency selector that always includes or excludes dependencies.
  */
@@ -44,11 +46,13 @@ public final class StaticDependencySelector
 
     public boolean selectDependency( Dependency dependency )
     {
+        requireNonNull( dependency, "dependency cannot be null" );
         return select;
     }
 
     public DependencySelector deriveChildSelector( DependencyCollectionContext context )
     {
+        requireNonNull( context, "context cannot be null" );
         return this;
     }
 
@@ -74,6 +78,12 @@ public final class StaticDependencySelector
         int hash = getClass().hashCode();
         hash = hash * 31 + ( select ? 1 : 0 );
         return hash;
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format( "%s(%s)", this.getClass().getSimpleName(), this.select ? "Select all" : "Exclude all" );
     }
 
 }

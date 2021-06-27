@@ -25,7 +25,7 @@
   <parent>
     <groupId>org.apache.maven.resolver</groupId>
     <artifactId>maven-resolver</artifactId>
-    <version>1.4.1-SNAPSHOT</version>
+    <version>1.7.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>maven-resolver-transport-http</artifactId>
@@ -38,7 +38,7 @@
   <properties>
     <Automatic-Module-Name>org.apache.maven.resolver.transport.http</Automatic-Module-Name>
     <Bundle-SymbolicName>${Automatic-Module-Name}</Bundle-SymbolicName>
-    <jettyVersion>9.2.26.v20180806</jettyVersion>
+    <jettyVersion>9.4.36.v20210114</jettyVersion>
   </properties>
 
   <dependencies>
@@ -57,7 +57,7 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>4.5.6</version>
+      <version>4.5.13</version>
       <exclusions>
         <exclusion>
           <!-- using jcl-over-slf4j instead -->
@@ -69,7 +69,7 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
-      <version>4.4.10</version>
+      <version>4.4.14</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -84,9 +84,19 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.sonatype.sisu</groupId>
-      <artifactId>sisu-guice</artifactId>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
       <classifier>no_aop</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>failureaccess</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -118,7 +128,7 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlet</artifactId>
+      <artifactId>jetty-http</artifactId>
       <version>${jettyVersion}</version>
       <scope>test</scope>
     </dependency>
@@ -132,6 +142,12 @@
       <version>${slf4jVersion}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.1.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -141,15 +157,15 @@
         <artifactId>sisu-maven-plugin</artifactId>
       </plugin>
       <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
+        <groupId>biz.aQute.bnd</groupId>
+        <artifactId>bnd-maven-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
-            <manifestFile>${project.build.directory}/osgi/MANIFEST.MF</manifestFile>
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
           </archive>
         </configuration>
       </plugin>

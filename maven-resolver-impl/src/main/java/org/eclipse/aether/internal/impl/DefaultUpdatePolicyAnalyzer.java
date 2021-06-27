@@ -22,6 +22,7 @@ package org.eclipse.aether.internal.impl;
 import java.util.Calendar;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.impl.UpdatePolicyAnalyzer;
@@ -29,8 +30,11 @@ import org.eclipse.aether.repository.RepositoryPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  */
+@Singleton
 @Named
 public class DefaultUpdatePolicyAnalyzer
     implements UpdatePolicyAnalyzer
@@ -45,6 +49,7 @@ public class DefaultUpdatePolicyAnalyzer
 
     public String getEffectiveUpdatePolicy( RepositorySystemSession session, String policy1, String policy2 )
     {
+        requireNonNull( session, "session cannot be null" );
         return ordinalOfUpdatePolicy( policy1 ) < ordinalOfUpdatePolicy( policy2 ) ? policy1 : policy2;
     }
 
@@ -72,6 +77,7 @@ public class DefaultUpdatePolicyAnalyzer
 
     public boolean isUpdatedRequired( RepositorySystemSession session, long lastModified, String policy )
     {
+        requireNonNull( session, "session cannot be null" );
         boolean checkForUpdates;
 
         if ( policy == null )
@@ -124,7 +130,7 @@ public class DefaultUpdatePolicyAnalyzer
         try
         {
             String s = policy.substring( RepositoryPolicy.UPDATE_POLICY_INTERVAL.length() + 1 );
-            minutes = Integer.valueOf( s );
+            minutes = Integer.parseInt( s );
         }
         catch ( RuntimeException e )
         {

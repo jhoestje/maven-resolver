@@ -22,6 +22,7 @@ package org.eclipse.aether.internal.impl;
 import java.util.regex.Pattern;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.impl.OfflineController;
@@ -29,9 +30,12 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.transfer.RepositoryOfflineException;
 import org.eclipse.aether.util.ConfigUtils;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * 
  */
+@Singleton
 @Named
 public class DefaultOfflineController
     implements OfflineController
@@ -51,6 +55,8 @@ public class DefaultOfflineController
     public void checkOffline( RepositorySystemSession session, RemoteRepository repository )
         throws RepositoryOfflineException
     {
+        requireNonNull( session, "session cannot be null" );
+        requireNonNull( repository, "repository cannot be null" );
         if ( isOfflineProtocol( session, repository ) || isOfflineHost( session, repository ) )
         {
             return;

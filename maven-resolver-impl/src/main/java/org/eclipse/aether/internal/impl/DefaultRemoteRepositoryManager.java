@@ -27,7 +27,9 @@ import static java.util.Objects.requireNonNull;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.aether.RepositoryCache;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.impl.RemoteRepositoryManager;
@@ -42,12 +44,12 @@ import org.eclipse.aether.repository.RepositoryPolicy;
 import org.eclipse.aether.spi.connector.checksum.ChecksumPolicyProvider;
 import org.eclipse.aether.spi.locator.Service;
 import org.eclipse.aether.spi.locator.ServiceLocator;
-import org.eclipse.aether.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  */
+@Singleton
 @Named
 public class DefaultRemoteRepositoryManager
     implements RemoteRepositoryManager, Service
@@ -129,6 +131,9 @@ public class DefaultRemoteRepositoryManager
                                                          List<RemoteRepository> recessiveRepositories,
                                                          boolean recessiveIsRaw )
     {
+        requireNonNull( session, "session cannot be null" );
+        requireNonNull( dominantRepositories, "dominantRepositories cannot be null" );
+        requireNonNull( recessiveRepositories, "recessiveRepositories cannot be null" );
         if ( recessiveRepositories.isEmpty() )
         {
             return dominantRepositories;
@@ -273,6 +278,8 @@ public class DefaultRemoteRepositoryManager
     public RepositoryPolicy getPolicy( RepositorySystemSession session, RemoteRepository repository, boolean releases,
                                        boolean snapshots )
     {
+        requireNonNull( session, "session cannot be null" );
+        requireNonNull( repository, "repository cannot be null" );
         RepositoryPolicy policy1 = releases ? repository.getPolicy( false ) : null;
         RepositoryPolicy policy2 = snapshots ? repository.getPolicy( true ) : null;
         return merge( session, policy1, policy2, true );

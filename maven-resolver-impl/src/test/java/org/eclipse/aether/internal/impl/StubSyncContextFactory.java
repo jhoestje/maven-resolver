@@ -24,8 +24,10 @@ import java.util.Collection;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.SyncContext;
 import org.eclipse.aether.artifact.Artifact;
-import org.eclipse.aether.impl.SyncContextFactory;
+import org.eclipse.aether.spi.synccontext.SyncContextFactory;
 import org.eclipse.aether.metadata.Metadata;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * 
@@ -36,6 +38,7 @@ public class StubSyncContextFactory
 
     public SyncContext newInstance( RepositorySystemSession session, boolean shared )
     {
+        requireNonNull( session, "session cannot be null" );
         return new SyncContext()
         {
             public void close()

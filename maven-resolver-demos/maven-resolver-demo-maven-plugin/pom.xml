@@ -25,10 +25,10 @@
   <parent>
     <groupId>org.apache.maven.resolver</groupId>
     <artifactId>maven-resolver-demos</artifactId>
-    <version>1.4.1-SNAPSHOT</version>
+    <version>1.7.2-SNAPSHOT</version>
   </parent>
 
-  <artifactId>maven-resolver-demo-maven-plugin</artifactId>
+  <artifactId>resolver-demo-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
 
   <name>Maven Artifact Resolver Demo Maven Plugin</name>
@@ -82,6 +82,18 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <!-- This is needed to prevent jar plugin to fail based on wrong automatic module name. -->
+          <archive combine.self="override" />
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <profiles>
     <profile>
       <id>run-its</id>
@@ -89,7 +101,7 @@
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>3.0.1</version>
+            <version>3.2.1</version>
             <configuration>
               <debug>false</debug>
               <projectsDirectory>src/it</projectsDirectory>
